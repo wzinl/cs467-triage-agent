@@ -111,8 +111,8 @@ def form_check(body):
 
 # ---------- versions ----------
 
-def releases(as_of):
-    """[(version, date, [changelog bullet lines])] for releases dated on or before as_of, newest first."""
+def releases(as_of, same_day=False):
+    """[(version, date, [changelog bullet lines])] for releases dated before as_of's day, newest first."""
     out, current = [], None
     path = os.path.join(REPO, "CHANGELOG.md")
     if not os.path.exists(path):
@@ -125,7 +125,7 @@ def releases(as_of):
                 d = datetime.strptime(m.group(2), "%B %d, %Y").replace(tzinfo=timezone.utc)
                 # CHANGELOG dates have no time of day, so a release dated the day the issue was opened
                 # may have come out after it. Count only releases from earlier days.
-                if d.date() < as_of.date():
+                if d.date() < as_of.date() or same_day and d.date() == as_of.date():
                     current = (m.group(1), d.date().isoformat(), [])
                     out.append(current)
         elif current and line.startswith("* "):
@@ -144,6 +144,8 @@ def version_check(body, as_of, resources=()):
             or re.search(r"(?i)aws provider[^\n0-9]{0,30}v?(\d+\.\d+\.\d+)", text)
             or re.search(r"(?i)provider[^\n0-9]{0,20}version[^\n0-9]{0,10}v?(\d+\.\d+\.\d+)", text))
     rel = releases(as_of)
+    if prov:   # a reporter on a release dated that same day shows it was already out
+        rel = [r for r in releases(as_of, same_day=True) if r[0] == prov.group(1) and r not in rel] + rel
     latest = rel[0][0] if rel else None
     notes = []
     out = {"terraform": tf.group(1) if tf else None,

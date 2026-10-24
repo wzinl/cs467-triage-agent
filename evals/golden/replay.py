@@ -81,7 +81,7 @@ def frozen_changelog(text, as_of):
     for line in text.splitlines(keepends=True):
         if line.startswith("## "):
             m = re.match(r"^## \d+\.\d+\.\d+ \(([A-Z][a-z]+ \d{1,2}, \d{4})\)", line)
-            keep = bool(m) and datetime.strptime(m.group(1), "%B %d, %Y").strftime("%Y-%m-%d") < as_of[:10]   # same-day releases may postdate the issue
+            keep = bool(m) and datetime.strptime(m.group(1), "%B %d, %Y").strftime("%Y-%m-%d") <= as_of[:10]   # triage_checks.py decides about same-day releases
         if keep:
             out.append(line)
     return "".join(out)

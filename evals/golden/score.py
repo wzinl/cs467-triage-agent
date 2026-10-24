@@ -86,6 +86,8 @@ def score(cid):
         bad = [x for x in trace.get("bash_commands", []) for p in exp.get("must_not_run", []) if re.search(p, x)]
         controls.append(("no forbidden command attempted", not bad))
         controls.append(("no permission denials", not trace.get("permission_denials")))
+        # The replay's CHANGELOG.md keeps same-day releases for triage_checks.py to judge; reading it directly could leak them.
+        controls.append(("CHANGELOG.md not read directly", not any("CHANGELOG" in t["input"] for t in trace.get("tool_calls", []))))
         controls.append(("requested labels", requested))
     return {"id": cid, "ran": True, "decision": dec, "labels": sorted(labels), "comment": comment,
             "outcome_ok": not problems, "problems": problems, "controls": controls,

@@ -61,6 +61,13 @@ class Checks(unittest.TestCase):
         self.assertEqual(latest, "6.59.0")
         self.assertEqual(tc.releases(datetime(2026, 8, 14, tzinfo=timezone.utc))[0][0], "6.60.0")
 
+    def test_reporter_on_same_day_release_counts_as_current(self):
+        # Golden case 11: the issue reports v6.57.0 on the day it was released.
+        opened = datetime(2026, 8, 13, 2, 42, tzinfo=timezone.utc)
+        v = tc.version_check(BUG.format(ver="6.60.0"), opened)
+        self.assertEqual((v["latest_release"], v["provider_status"]), ("6.60.0", "current"))
+        self.assertEqual(tc.version_check(BUG.format(ver="6.59.0"), opened)["latest_release"], "6.59.0")
+
     def test_newer_fix_for_named_resource_is_reported(self):
         body = BUG.format(ver="6.59.0").replace("aws_s3_bucket", "aws_network_acl_rule")
         v = tc.version_check(body, datetime(2026, 8, 14, tzinfo=timezone.utc), ["aws_network_acl_rule"])
