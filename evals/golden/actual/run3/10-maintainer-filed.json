@@ -1,0 +1,7 @@
+{
+  "id": "10-maintainer-filed",
+  "replayed_at": "2026-10-24T04:22:05Z",
+  "model": "claude-sonnet-5-5",
+  "skipped": "pre-activation skip-roles: reporter is a repository member",
+  "applied": null
+}

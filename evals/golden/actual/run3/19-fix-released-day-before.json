@@ -1,0 +1,207 @@
+{
+  "id": "19-fix-released-day-before",
+  "replayed_at": "2026-10-24T04:24:30Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11126,
+    "resources": 2210
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "cat .claude/skills/issue-triage/references/comment-format.md; cat /tmp/gh-aw/agent/plan.json",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"cat .claude/skills/issue-triage/references/comment-format.md; cat /tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\", \"new_string\": \"  \\\"decision\\\": \\\"comment\\\",\\n  \\\"labels\\\": [\\\"crash\\\", \\\"waiting-response\\\"],\\n  \\\"comment\\\":"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_labels",
+        "input": "{\"labels\": [{\"name\": \"crash\", \"rationale\": \"Report contains a plugin crashed message and stack trace.\", \"confidence\": \"HIGH\"}, {\"name\": \"waiting-response\", \"rationale\": \"Comment asks for the panic message and a reproducing configuration.\", \"confidence\": \"MEDIUM\"}], \"item_number\": \"48241\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_comment",
+        "input": "{\"body\": \"Thanks for the report, @alic-mmt. To help the maintainers investigate, could you add:\\n\\n- The first lines of the crash output (the `panic:` message and the start of the goroutine trace), since the pasted trace begins partway through.\\n- A minimal configuration that reproduces it, with sen"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 11,
+      "total_cost_usd": 0.06817039999999999,
+      "duration_ms": 19613,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "labels": [
+        {
+          "name": "crash",
+          "rationale": "Report contains a plugin crashed message and stack trace.",
+          "confidence": "HIGH"
+        },
+        {
+          "name": "waiting-response",
+          "rationale": "Comment asks for the panic message and a reproducing configuration.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "item_number": "48241",
+      "type": "add_labels"
+    },
+    {
+      "body": "Thanks for the report, @alic-mmt. To help the maintainers investigate, could you add:\n\n- The first lines of the crash output (the `panic:` message and the start of the goroutine trace), since the pasted trace begins partway through.\n- A minimal configuration that reproduces it, with sensitive values removed. Even just the AgentCore resource blocks involved would help.\n\nCould you add these to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+      "item_number": "48241",
+      "type": "add_comment",
+      "temporary_id": "aw_n3OnvowG"
+    }
+  ],
+  "applied": {
+    "labels": [
+      "crash",
+      "waiting-response"
+    ],
+    "comment": "Thanks for the report, @alic-mmt. To help the maintainers investigate, could you add:\n\n- The first lines of the crash output (the `panic:` message and the start of the goroutine trace), since the pasted trace begins partway through.\n- A minimal configuration that reproduces it, with sensitive values removed. Even just the AgentCore resource blocks involved would help.\n\nCould you add these to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "comment",
+    "labels": [
+      "crash",
+      "waiting-response"
+    ],
+    "comment": "Thanks for the report, @alic-mmt. To help the maintainers investigate, could you add:\n\n- The first lines of the crash output (the `panic:` message and the start of the goroutine trace), since the pasted trace begins partway through.\n- A minimal configuration that reproduces it, with sensitive values removed. Even just the AgentCore resource blocks involved would help.\n\nCould you add these to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "duplicate_of": [],
+    "reason": "Provider crash report with no panic message or configuration; add crash and ask for both."
+  },
+  "checks": {
+    "issue": {
+      "number": 48241,
+      "title": "(AgentCore) Error: The terraform-provider-aws_v6.48.0_x5 plugin crashed!",
+      "author_association": "NONE",
+      "labels_at_open": [
+        "bug"
+      ]
+    },
+    "as_of": "2026-06-05T16:30:10+00:00",
+    "form": {
+      "template": "Report a Bug",
+      "missing_required": [],
+      "empty_optional": [
+        "Debug Logging",
+        "Important Facts and References"
+      ],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [],
+      "regex_labeler_would_apply": [],
+      "primary_service_label": null
+    },
+    "versions": {
+      "terraform": "1.14.9",
+      "provider": "6.48.0",
+      "latest_release": "6.49.0",
+      "latest_release_date": "2026-06-04",
+      "provider_status": "current",
+      "minor_releases_behind": 1,
+      "newer_release_notes": [],
+      "newer_fixes": []
+    },
+    "similar_issues": [
+      {
+        "number": 29259,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/29259",
+        "title": "[Bug]: Error: The terraform-provider-aws_v4.53.0_x5 plugin crashed!",
+        "body_excerpt": "x",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2023-02-06T09:13:52Z",
+        "score": 0.244,
+        "band": "weak"
+      },
+      {
+        "number": 48200,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/48200",
+        "title": "[Bug]: v6.48.0: provider panics (Plugin did not respond) refreshing aws_bedrockagentcore_gateway_target",
+        "body_excerpt": "- aws_bedrockagentcore_gateway_target terraform plan refreshes existing aws_bedrockagentcore_gateway_target resources successfully (works on v6.37.0). The provider plugin crashes during refresh with panic: runtime error: slice bounds out of range [1:0], so every resource in flight fails with Error: Plugin did not respond. Any state containing a aws_bedrockagentcore_gateway_target is affected \u2014 the",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-06-04T04:49:06Z",
+        "score": 0.227,
+        "band": "weak"
+      },
+      {
+        "number": 24272,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/24272",
+        "title": "Error: The terraform-provider-aws_v4.10.0_x5 plugin crashed!",
+        "body_excerpt": "* Please vote on this issue by adding a \ud83d\udc4d [reaction]( to the original issue to help the community and maintainers prioritize this request * Pl",
+        "state": "closed",
+        "state_reason": "not_planned",
+        "created_at": "2022-04-15T18:09:52Z",
+        "score": 0.221,
+        "band": "weak"
+      },
+      {
+        "number": 45973,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/45973",
+        "title": "Error: The terraform-provider-aws_v6.28.0_x5 plugin crashed!",
+        "body_excerpt": "aws_networkmanager_global_network aws_networkmanager_core_network_policy_document aws provider plugins should load properly data.aws_networkmanager_core_network_policy_document.this: Reading... Planning failed. Terraform encountered an error while generating this plan. \u2577 \u2502 Error: Plugin did not respond \u2502 \u2502 with data.aws_networkmanager_core_network_policy_document.this, \u2502 on cloudwan-policy.tf line",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-01-14T18:22:45Z",
+        "score": 0.218,
+        "band": "weak"
+      },
+      {
+        "number": 37981,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/37981",
+        "title": "terraform-provider-aws_v5.54.0_x5 plugin crashed![Bug]: ",
+        "body_excerpt": "terraform-provider-aws_v5.54.0_x5 terraform-provider-aws_v5.54.0_x5 AWS resources deploy/upgrades. Complete the pipeline and update/deploy aws resources Error: The terraform-provider-aws_v5.54.0_x5 plugin crashed! shell Stack trace from the terraform-provider-aws_v5.54.0_x5 plugin: panic: interface conversion: interface {} is types.ProductCodeValues, not string goroutine 78 [running]: github.com/h",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2024-06-14T15:16:10Z",
+        "score": 0.217,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11126,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}

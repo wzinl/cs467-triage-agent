@@ -1,0 +1,218 @@
+{
+  "id": "12-missing-configuration",
+  "replayed_at": "2026-10-24T04:22:20Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11620,
+    "resources": 2252
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/home/claude/work/triage-replay/workspace/.claude/skills/issue-triage/references/comment-format.md\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\", \"new_string\": \"  \\\"decision\\\": \\\"comment\\\",\\n  \\\"labels\\\": [\\\"service/opensearch\\\", \\\"waiting-response\\\"],\\n "
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_labels",
+        "input": "{\"labels\": [{\"name\": \"service/opensearch\", \"rationale\": \"Issue concerns aws_opensearch_domain; regex labeler would not add the service label.\", \"confidence\": \"HIGH\"}, {\"name\": \"waiting-response\", \"rationale\": \"Required sample Terraform configuration is missing; comment asks for it.\", \"confidence\": \""
+      },
+      {
+        "tool": "mcp__safeoutputs__add_comment",
+        "input": "{\"body\": \"Thanks for the report, @Vuelos. To reproduce this, the maintainers will need:\\n\\n- The Terraform configuration (the Sample Terraform Configuration field is empty), including the `aws_opensearch_domain` resource with its `aiml_options` block, before and after the change\\n\\nCould you add thi"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 12,
+      "total_cost_usd": 0.07781260000000001,
+      "duration_ms": 15883,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "labels": [
+        {
+          "name": "service/opensearch",
+          "rationale": "Issue concerns aws_opensearch_domain; regex labeler would not add the service label.",
+          "confidence": "HIGH"
+        },
+        {
+          "name": "waiting-response",
+          "rationale": "Required sample Terraform configuration is missing; comment asks for it.",
+          "confidence": "HIGH"
+        }
+      ],
+      "item_number": "49720",
+      "type": "add_labels"
+    },
+    {
+      "body": "Thanks for the report, @Vuelos. To reproduce this, the maintainers will need:\n\n- The Terraform configuration (the Sample Terraform Configuration field is empty), including the `aws_opensearch_domain` resource with its `aiml_options` block, before and after the change\n\nCould you add this to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+      "item_number": "49720",
+      "type": "add_comment",
+      "temporary_id": "aw_lyvHftdz"
+    }
+  ],
+  "applied": {
+    "labels": [
+      "service/opensearch",
+      "waiting-response"
+    ],
+    "comment": "Thanks for the report, @Vuelos. To reproduce this, the maintainers will need:\n\n- The Terraform configuration (the Sample Terraform Configuration field is empty), including the `aws_opensearch_domain` resource with its `aiml_options` block, before and after the change\n\nCould you add this to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "comment",
+    "labels": [
+      "service/opensearch",
+      "waiting-response"
+    ],
+    "comment": "Thanks for the report, @Vuelos. To reproduce this, the maintainers will need:\n\n- The Terraform configuration (the Sample Terraform Configuration field is empty), including the `aws_opensearch_domain` resource with its `aiml_options` block, before and after the change\n\nCould you add this to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "duplicate_of": [],
+    "reason": "Required Sample Terraform Configuration is empty; no duplicate found; primary service label missing from labeler output."
+  },
+  "checks": {
+    "issue": {
+      "number": 49720,
+      "title": "UpdateDomainConfig ValidationException: serverless_vector_acceleration sent for unsupported OpenSearch versions (< 3.1) during aiml_options update",
+      "author_association": "NONE",
+      "labels_at_open": [
+        "bug"
+      ]
+    },
+    "as_of": "2026-08-27T17:26:08+00:00",
+    "form": {
+      "template": "Report a Bug",
+      "missing_required": [
+        "Sample Terraform Configuration"
+      ],
+      "empty_optional": [
+        "Relevant Error/Panic Output",
+        "Debug Logging"
+      ],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_opensearch_domain",
+          "known": true,
+          "service_label": "service/opensearch"
+        }
+      ],
+      "regex_labeler_would_apply": [],
+      "primary_service_label": "service/opensearch"
+    },
+    "versions": {
+      "terraform": "1.14.4",
+      "provider": "6.62.0",
+      "latest_release": "6.62.0",
+      "latest_release_date": "2026-08-26",
+      "provider_status": "current",
+      "minor_releases_behind": 0,
+      "newer_release_notes": [],
+      "newer_fixes": []
+    },
+    "similar_issues": [
+      {
+        "number": 44918,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/44918",
+        "title": "Add documentation for aiml_options to aws_opensearch_domain",
+        "body_excerpt": "Hi, Documentation is missing for usage of aiml_options in resource aws_opensearch_domain. Thanks No",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-11-04T11:06:23Z",
+        "score": 0.301,
+        "band": "possible"
+      },
+      {
+        "number": 45657,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/45657",
+        "title": "[Enhancement]: Add AIMLOptions.ServerlessVectorAcceleration to aws_opensearch_domain",
+        "body_excerpt": "ServerlessVectorAcceleration provides [GPU-accelerated]( vector search capabilities for improved performance on vector workloads. aws_opensearch_domain hcl resource \"aws_opensearch_domain\" \"example\" { aiml_options { serverless_vector_acceleration { enabled = true } } } Yes",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-12-18T21:23:24Z",
+        "score": 0.278,
+        "band": "weak"
+      },
+      {
+        "number": 45036,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/45036",
+        "title": "6.20 fails to apply OpenSearch cluster with aiml_options for non OR1 instance types",
+        "body_excerpt": "* aws_opensearch_domain * Expected the plan to apply cleanly. The plan executes and shows the correct behavior, i. e. disable natural_language_query_generation_options. But the apply fails with ValidationException: S3 Vectors Engine features are only supported with OR1 instance types. Chosen instance type is m7g.large.search console $ terraform apply \"plan.out\" module.opensearch.aws_opensearch_dom",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2025-11-12T09:29:27Z",
+        "score": 0.195,
+        "band": "weak"
+      },
+      {
+        "number": 48144,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/48144",
+        "title": "Add JwksUrl to opensearch service jwt_options",
+        "body_excerpt": "The UpdateDomainConfig action for resource aws_opensearch_domain supports the field AdvancedSecurityOptions.JWTOptions.JwksUrl but it's not present in the provider. Please add this field so that we can configure our OpenSearch domains. * aws_opensearch_domain hcl resource \"aws_opensearch_domain\" \"my_domain\" { domain_name = \"opensearch\" engine_version = \"OpenSearch_3.5\" advanced_security_options { ",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-06-01T10:30:40Z",
+        "score": 0.175,
+        "band": "weak"
+      },
+      {
+        "number": 38136,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/38136",
+        "title": "[Bug]: Error: updating OpenSearch Domain (): ValidationException: A change/update is in progress. Please wait for it to complete before requesting another change.",
+        "body_excerpt": "1.7.5 5.55.0 * aws_opensearch_domain The aws_opensearch_domain resource waits until OS domain is ready to take another change. Error: updating OpenSearch Domain (): ValidationException: A change/update is in progress. Please wait for it to complete before requesting another change. shell aws_security_group.os: Modifying... [id=id] aws_security_group.os: Modifications complete after 0s [id=id] modu",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2024-06-26T11:10:37Z",
+        "score": 0.159,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11620,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}

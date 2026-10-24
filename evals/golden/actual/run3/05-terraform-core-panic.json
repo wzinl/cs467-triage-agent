@@ -1,0 +1,211 @@
+{
+  "id": "05-terraform-core-panic",
+  "replayed_at": "2026-10-24T04:20:25Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11632,
+    "resources": 2255
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/home/claude/work/triage-replay/workspace/.claude/skills/issue-triage/references/comment-format.md\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"{\\n  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\\n}\", \"new_string\": \"{\\n  \\\"decision\\\": \\\"comment\\\",\\n  \\\"labels\\\": [\\\"upstream-terraform\\\"],\\n  \\\"comment\\\":"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_labels",
+        "input": "{\"labels\": [{\"name\": \"upstream-terraform\", \"rationale\": \"Panic stack trace is entirely within Terraform core (go-cty marked value in UiHook.PrePlanImport), no provider frames.\", \"confidence\": \"HIGH\"}], \"item_number\": \"49761\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_comment",
+        "input": "{\"body\": \"Thanks for the report, @TrebuszeQ. The panic output you included comes from Terraform core (frames in `hashicorp/terraform/internal/...`), not from the AWS provider, so it is most likely tracked in the Terraform repository instead: https://github.com/hashicorp/terraform/issues\\nIt may help"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 12,
+      "total_cost_usd": 0.0932693,
+      "duration_ms": 22537,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "labels": [
+        {
+          "name": "upstream-terraform",
+          "rationale": "Panic stack trace is entirely within Terraform core (go-cty marked value in UiHook.PrePlanImport), no provider frames.",
+          "confidence": "HIGH"
+        }
+      ],
+      "item_number": "49761",
+      "type": "add_labels"
+    },
+    {
+      "body": "Thanks for the report, @TrebuszeQ. The panic output you included comes from Terraform core (frames in `hashicorp/terraform/internal/...`), not from the AWS provider, so it is most likely tracked in the Terraform repository instead: https://github.com/hashicorp/terraform/issues\nIt may help to open the issue there with the same panic output and configuration.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+      "item_number": "49761",
+      "type": "add_comment",
+      "temporary_id": "aw_iXNwebkr"
+    }
+  ],
+  "applied": {
+    "labels": [
+      "upstream-terraform"
+    ],
+    "comment": "Thanks for the report, @TrebuszeQ. The panic output you included comes from Terraform core (frames in `hashicorp/terraform/internal/...`), not from the AWS provider, so it is most likely tracked in the Terraform repository instead: https://github.com/hashicorp/terraform/issues\nIt may help to open the issue there with the same panic output and configuration.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "comment",
+    "labels": [
+      "upstream-terraform"
+    ],
+    "comment": "Thanks for the report, @TrebuszeQ. The panic output you included comes from Terraform core (frames in `hashicorp/terraform/internal/...`), not from the AWS provider, so it is most likely tracked in the Terraform repository instead: https://github.com/hashicorp/terraform/issues\nIt may help to open the issue there with the same panic output and configuration.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "duplicate_of": [],
+    "reason": "Panic stack is entirely in Terraform core (marked value in UiHook.PrePlanImport); wrong venue."
+  },
+  "checks": {
+    "issue": {
+      "number": 49761,
+      "title": "Go panic on aws_organizations_organization import",
+      "author_association": "NONE",
+      "labels_at_open": [
+        "bug"
+      ]
+    },
+    "as_of": "2026-08-31T16:36:37+00:00",
+    "form": {
+      "template": "Report a Bug",
+      "missing_required": [],
+      "empty_optional": [
+        "Debug Logging"
+      ],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_organizations_organization",
+          "known": true,
+          "service_label": "service/organizations"
+        }
+      ],
+      "regex_labeler_would_apply": [
+        "bug",
+        "crash"
+      ],
+      "primary_service_label": "service/organizations"
+    },
+    "versions": {
+      "terraform": "1.16.0",
+      "provider": "6.61.0",
+      "latest_release": "6.62.0",
+      "latest_release_date": "2026-08-26",
+      "provider_status": "current",
+      "minor_releases_behind": 1,
+      "newer_release_notes": [],
+      "newer_fixes": []
+    },
+    "similar_issues": [
+      {
+        "number": 31586,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/31586",
+        "title": "[Bug]: Tf 5.0.0 crashes at apply step.",
+        "body_excerpt": "1.3.1 5.0.0 Can not run an apply to add an application's dependent resources. This application has many different resources that need to be created and are interdependent. Successful apply of changes Crashes after a successful plan at the apply stage. shell Stack trace from the terraform-provider-aws_v5.0.0_x5 plugin: panic: value is null goroutine 5267 [running]: github.com/hashicorp/go-cty/cty.V",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2023-05-25T23:02:14Z",
+        "score": 0.255,
+        "band": "weak"
+      },
+      {
+        "number": 33995,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/33995",
+        "title": "[Bug]: panic: value is null",
+        "body_excerpt": "1.5.0 5.21.0 I'm not sure Don't crash a panic during terraform apply shell Stack trace from the terraform-provider-aws_v5.21.0_x5 plugin: panic: value is null goroutine 1584 [running]: github.com/hashicorp/go-cty/cty.Value.LengthInt({{{0xf0cf538?, 0xc002b25160?}}, {0x0?, 0x0?}}) github.com/hashicorp/go-cty@v1.4.1-0.20200414143053-d3edf31b6320/cty/value_ops.go:989 +0x27d github.com/hashicorp/go-cty",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2023-10-18T22:02:35Z",
+        "score": 0.245,
+        "band": "weak"
+      },
+      {
+        "number": 31583,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/31583",
+        "title": "[Bug]: aws_lambda_function resource causing plugin not to respond.",
+        "body_excerpt": "1.2.3 5.0.0_x5 aws_lambda_function Should provision the lambda function resource. Error: Plugin did not respond \u2502 The plugin encountered an error, and failed to respond to the \u2502 plugin.(*GRPCProvider).ApplyResourceChange call. The plugin logs may \u2502 contain more details. shell panic: value is null goroutine 377 [running]: github.com/hashicorp/go-cty/cty.Value.AsString({{{0xf099650?, 0xc0002ea291?}}",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2023-05-25T20:45:52Z",
+        "score": 0.242,
+        "band": "weak"
+      },
+      {
+        "number": 33926,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/33926",
+        "title": "[Bug]: Terraform crashes with aws_wafv2_web_acl_logging_configuration updates",
+        "body_excerpt": "0.12.31 3.76.1 aws_wafv2_web_acl_logging_configuration Terraform should be able to plan the change. Terraform crashes with the errors below when updating the resource. shell panic: inconsistent set element types (cty.Object(map[string]cty.Type{\"action_condition\":cty.Tuple([]cty.Type{cty.Object(map[string]cty.Type{\"action\":cty.String})}), \"label_name_condition\":cty.EmptyTuple}) then cty.Object(map[",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2023-10-13T09:01:16Z",
+        "score": 0.237,
+        "band": "weak"
+      },
+      {
+        "number": 32781,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/32781",
+        "title": "[Bug]: Terraform crashes importing RDS DBInstance",
+        "body_excerpt": "1.5.4 5.10.0 aws_db_instance terraform to import the configurations of the db instance manually created Terraform crash report shell !!!!!!!!!!!!!!!!!!!!!!!!!!! TERRAFORM CRASH !!!!!!!!!!!!!!!!!!!!!!!!!!!! runtime error: invalid memory address or nil pointer dereference goroutine 109 [running]: runtime/debug.Stack() /Users/runner/hostedtoolcache/go/1.20.0/x64/src/runtime/debug/stack.go:24 +0x65 ru",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2023-08-01T05:24:50Z",
+        "score": 0.2,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11632,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}

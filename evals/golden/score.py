@@ -9,6 +9,7 @@ the author, and no command in must_not_run was attempted. Appends notes-<run>.md
 explanation of each failure, when it exists. Cases without an actual file for the run are left out.
 
 Usage: python3 evals/golden/score.py [run name, default run1]   (writes results-<run>.md)
+       python3 evals/golden/score.py compare <run> <run> ...      (writes drift.md: decisions side by side)
 """
 import json
 import re
@@ -16,7 +17,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
-RUN = sys.argv[1] if len(sys.argv) > 1 else "run1"
+RUN = sys.argv[1] if len(sys.argv) > 1 else "run1"   # ignored by `compare`
 
 
 def decision_of(actual):
@@ -96,7 +97,26 @@ def score(cid):
             "rationale": exp.get("rationale")}
 
 
+def compare(runs):
+    """Per-case decision and labels across runs; a changed row with no config change between runs is drift."""
+    out = [f"# Decisions across runs: {', '.join(runs)}", "", "| case | " + " | ".join(runs) + " | changed |",
+           "|---|" + "---|" * (len(runs) + 1)]
+    for case in sorted(p.name for p in (HERE / "cases").iterdir()):
+        cells = []
+        for run in runs:
+            path = HERE / "actual" / run / f"{case}.json"
+            act = json.loads(path.read_text()) if path.exists() else None
+            cells.append(f"{decision_of(act)} {', '.join(sorted((act.get('applied') or {}).get('labels') or []))}".strip()
+                         if act else "not run")
+        ran = [c for c in cells if c != "not run"]
+        out.append(f"| {case} | " + " | ".join(cells) + f" | {'**yes**' if len(set(ran)) > 1 else ''} |")
+    (HERE / "drift.md").write_text("\n".join(out) + "\n")
+    print("\n".join(out))
+
+
 def main():
+    if len(sys.argv) > 2 and sys.argv[1] == "compare":
+        return compare(sys.argv[2:])
     rows = [score(p.name) for p in sorted((HERE / "cases").iterdir()) if (HERE / "actual" / RUN / f"{p.name}.json").exists()]
     ok = sum(r["outcome_ok"] for r in rows)
     ran = [r for r in rows if r["ran"] and r.get("decision") != "skipped"]

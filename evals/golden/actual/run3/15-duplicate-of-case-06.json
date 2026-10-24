@@ -1,0 +1,194 @@
+{
+  "id": "15-duplicate-of-case-06",
+  "replayed_at": "2026-10-24T04:23:15Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11721,
+    "resources": 2263
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/home/claude/work/triage-replay/workspace/.claude/skills/issue-triage/references/comment-format.md\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\", \"new_string\": \"  \\\"decision\\\": \\\"comment\\\",\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": \\\"Thanks for the report, @Samp"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_comment",
+        "input": "{\"body\": \"Thanks for the report, @Sampath8797. This looks like it may be the same problem as https://github.com/hashicorp/terraform-provider-aws/issues/49594 (aws_bedrockagentcore_harness: service-populated memory retrieval_config makes every apply fail with \\\"inconsistent result after apply\\\").\\nIf"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 11,
+      "total_cost_usd": 0.08029259999999999,
+      "duration_ms": 16327,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "body": "Thanks for the report, @Sampath8797. This looks like it may be the same problem as https://github.com/hashicorp/terraform-provider-aws/issues/49594 (aws_bedrockagentcore_harness: service-populated memory retrieval_config makes every apply fail with \"inconsistent result after apply\").\nIf it is, please add a \ud83d\udc4d and any extra details there, so the discussion stays in one place.\nIf it is different, a short note on how it differs will help the maintainers.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+      "item_number": "50097",
+      "type": "add_comment",
+      "temporary_id": "aw_PNkXi7gA"
+    }
+  ],
+  "applied": {
+    "labels": [],
+    "comment": "Thanks for the report, @Sampath8797. This looks like it may be the same problem as https://github.com/hashicorp/terraform-provider-aws/issues/49594 (aws_bedrockagentcore_harness: service-populated memory retrieval_config makes every apply fail with \"inconsistent result after apply\").\nIf it is, please add a \ud83d\udc4d and any extra details there, so the discussion stays in one place.\nIf it is different, a short note on how it differs will help the maintainers.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "comment",
+    "labels": [],
+    "comment": "Thanks for the report, @Sampath8797. This looks like it may be the same problem as https://github.com/hashicorp/terraform-provider-aws/issues/49594 (aws_bedrockagentcore_harness: service-populated memory retrieval_config makes every apply fail with \"inconsistent result after apply\").\nIf it is, please add a \ud83d\udc4d and any extra details there, so the discussion stays in one place.\nIf it is different, a short note on how it differs will help the maintainers.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "duplicate_of": [
+      49594
+    ],
+    "reason": "Same resource and same retrieval_config inconsistent-result error as open issue 49594; bug and service labels come from the regex labeler."
+  },
+  "checks": {
+    "issue": {
+      "number": 50097,
+      "title": "[Bug]: aws_bedrockagentcore_harness produces inconsistent result after apply for memory.agentcore_memory_configuration.retrieval_config",
+      "author_association": "NONE",
+      "labels_at_open": []
+    },
+    "as_of": "2026-09-21T09:55:24+00:00",
+    "form": {
+      "template": null,
+      "missing_required": [],
+      "empty_optional": [],
+      "used_form": false
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_bedrockagentcore_harness",
+          "known": true,
+          "service_label": "service/bedrockagentcore"
+        },
+        {
+          "name": "aws_iam_role",
+          "known": true,
+          "service_label": "service/iam"
+        }
+      ],
+      "regex_labeler_would_apply": [
+        "bug",
+        "service/bedrockagentcore"
+      ],
+      "primary_service_label": "service/bedrockagentcore"
+    },
+    "versions": {
+      "terraform": null,
+      "provider": null,
+      "latest_release": "6.65.0",
+      "latest_release_date": "2026-09-16",
+      "provider_status": "not_reported",
+      "newer_release_notes": [],
+      "newer_fixes": []
+    },
+    "similar_issues": [
+      {
+        "number": 49594,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/49594",
+        "title": "[Bug]: aws_bedrockagentcore_harness: service-populated memory retrieval_config makes every apply fail with \"inconsistent result after apply\"",
+        "body_excerpt": "* aws_bedrockagentcore_harness When memory.agentcore_memory_configuration only references an existing AgentCore Memory by ARN and declares no retrieval_config block, apply should succeed and the following plan should be empty. Every apply that creates or replaces the harness fails with Provider produced inconsistent result after apply, because the service returns one retrieval_config entry per mem",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2026-08-20T04:06:35Z",
+        "score": 0.648,
+        "band": "likely"
+      },
+      {
+        "number": 48159,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/48159",
+        "title": "[Bug]: aws_bedrockagentcore_harness produces inconsistent result after apply (environment.agentcore_runtime_environment computed fields)",
+        "body_excerpt": "- aws_bedrockagentcore_harness When creating an aws_bedrockagentcore_harness with an environment block (to set network_configuration for VPC mode), terraform apply fails with **\"Provider produced inconsistent result after apply\"**. The API populates several fields under environment[0].agentcore_runtime_environment[0] server-side after creation, but those fields are **not marked Computed** in the p",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-06-02T06:01:14Z",
+        "score": 0.399,
+        "band": "possible"
+      },
+      {
+        "number": 50056,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/50056",
+        "title": "[Bug]: aws_bedrockagentcore_harness produces \"Provider produced inconsistent result after apply\" for environment_variables (sensitive attribute) on update",
+        "body_excerpt": "- aws_bedrockagentcore_harness aws_bedrockagentcore_harness has a top-level environment_variables attribute (schema.MapAttribute{Optional: true, Sensitive: true} in internal/service/bedrockagentcore/harness.go) that is **not marked Computed**. When environment_variables is left unset in configuration (so Terraform plans it as null), an in-place update to the harness (e.g. changing system_prompt, m",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2026-09-17T16:46:48Z",
+        "score": 0.389,
+        "band": "possible"
+      },
+      {
+        "number": 49404,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/49404",
+        "title": "AgentCore Harness Creation Fails with \"Provider produced inconsistent result after apply\"",
+        "body_excerpt": "Resource: aws_bedrockagentcore_harness [Harness Definition]( I would expect that it will generate the listed outputs; the harness ARNs Error: Provider produced inconsistent result after apply I have provided the errors for both harness creation failures. There are 3 errors for each harness and they appear in order; checkov harness then tflint harness Error: Provider produced inconsistent result af",
+        "state": "closed",
+        "state_reason": "duplicate",
+        "created_at": "2026-08-12T00:08:14Z",
+        "score": 0.352,
+        "band": "possible"
+      },
+      {
+        "number": 23613,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/23613",
+        "title": "aws_ecs_service Provider produced inconsistent result after apply",
+        "body_excerpt": "Whenever I create ECS service Terraform return following error Error: Provider produced inconsistent result after apply When applying changes to aws_ecs_service.ecs_service, provider registry.terraform.io/-/aws\" produced an unexpected new value for was present, but now absent. This is a bug in the provider, which should be reported in the provider's own issue tracker. required_version = \">= 0.12\" ",
+        "state": "closed",
+        "state_reason": "not_planned",
+        "created_at": "2022-03-10T11:24:48Z",
+        "score": 0.287,
+        "band": "possible"
+      }
+    ],
+    "corpus_size": 11721,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}
