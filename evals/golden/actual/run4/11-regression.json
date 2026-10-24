@@ -1,0 +1,202 @@
+{
+  "id": "11-regression",
+  "replayed_at": "2026-10-24T04:30:52Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11448,
+    "resources": 2238
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\", \"description\": \"Run triage checks\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"{}\", \"new_string\": \"{\\\"decision\\\": \\\"labels\\\", \\\"labels\\\": [\\\"regression\\\"], \\\"comment\\\": null, \\\"duplicate_of\\\": [], \\\"reason\\\": \\\"Reporter says v6.56.0 works and v6.57.0 fails; form complete, bug and service/iam alrea"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\", \"new_string\": \"  \\\"decision\\\": \\\"labels\\\",\\n  \\\"labels\\\": [\\\"regression\\\"],\\n  \\\"comment\\\": null,\\n  \\\"duplic"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\", \"description\": \"Validate triage plan\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_labels",
+        "input": "{\"labels\": [{\"name\": \"regression\", \"rationale\": \"Reporter states the same configuration works on v6.56.0 and fails on v6.57.0.\", \"confidence\": \"HIGH\"}], \"item_number\": \"49170\"}"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 11,
+      "total_cost_usd": 0.1366322,
+      "duration_ms": 13701,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "labels": [
+        {
+          "name": "regression",
+          "rationale": "Reporter states the same configuration works on v6.56.0 and fails on v6.57.0.",
+          "confidence": "HIGH"
+        }
+      ],
+      "item_number": "49170",
+      "type": "add_labels"
+    }
+  ],
+  "applied": {
+    "labels": [
+      "regression"
+    ],
+    "comment": null,
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "labels",
+    "labels": [
+      "regression"
+    ],
+    "comment": null,
+    "duplicate_of": [],
+    "reason": "Reporter says v6.56.0 works and v6.57.0 fails; form complete, bug and service/iam already applied, no duplicate."
+  },
+  "checks": {
+    "issue": {
+      "number": 49170,
+      "title": "api error UnknownError: UnknownError with v6.57.0",
+      "author_association": "NONE",
+      "labels_at_open": [
+        "bug"
+      ]
+    },
+    "as_of": "2026-07-29T10:26:50+00:00",
+    "form": {
+      "template": "Report a Bug",
+      "missing_required": [],
+      "empty_optional": [
+        "Affected Resource(s) or Data Source(s)",
+        "Debug Logging",
+        "Important Facts and References"
+      ],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_iam_policy",
+          "known": true,
+          "service_label": "service/iam"
+        }
+      ],
+      "regex_labeler_would_apply": [
+        "service/iam"
+      ],
+      "primary_service_label": "service/iam"
+    },
+    "versions": {
+      "terraform": "1.11.4",
+      "provider": "6.57.0",
+      "latest_release": "6.57.0",
+      "latest_release_date": "2026-07-29",
+      "provider_status": "current",
+      "minor_releases_behind": 0,
+      "newer_release_notes": [],
+      "newer_fixes": []
+    },
+    "similar_issues": [
+      {
+        "number": 39050,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/39050",
+        "title": "[Bug]: Error deleting SSM parameter after upgrading provider over v5.50.0",
+        "body_excerpt": "1.9.5 5.64.0 * aws_ssm_parameter The ssm parameters are deleted Error: deleting SSM Parameter (arn:aws:ssm: : :parameter ): operation error SSM: DeleteParameter, https response error StatusCode: 400, RequestID: , api error ValidationException: Parameter ARN is not supported for this operation. terraform { required_version = \">= 1.5.0\" backend \"local\" { path = \"terraform.tfstate\" } required_provide",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2024-08-27T15:02:07Z",
+        "score": 0.221,
+        "band": "weak"
+      },
+      {
+        "number": 40319,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/40319",
+        "title": "[Bug]: SignatureDoesNotMatch error when using custom IAM region",
+        "body_excerpt": "v1.9.8 v5.76.0 * aws_iam_policy I am currently working on migrating an application to run in standard AWS commercial, as well as other AWS environments with different endpoints (e.g. GovCloud). I am defining all of the endpoints for the providers based on the AWS environment and region I'm deploying to. When defining the iam endpoint in the aws provider as ([the default value for AWS commercial]( ",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2024-11-26T20:24:35Z",
+        "score": 0.221,
+        "band": "weak"
+      },
+      {
+        "number": 28422,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/28422",
+        "title": "[Bug]: CloudWatch resources can no longer be refreshed with default ReadOnlyAccess policy",
+        "body_excerpt": "1.3.6 4.47.0 Observed: - aws_cloudwatch_log_group Expected: - aws_cloudwatch_* I'd expect to be able to plan and refresh state using the default AWS ReadOnlyAccess policy (arn:aws:iam::aws:policy/ReadOnlyAccess). The state couldn't be refreshed due to the logs:ListTagsForResource action not being present in the default AWS ReadOnlyAccess policy (arn:aws:iam::aws:policy/ReadOnlyAccess). shell Error",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2022-12-16T12:10:24Z",
+        "score": 0.205,
+        "band": "weak"
+      },
+      {
+        "number": 41934,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/41934",
+        "title": "[Bug]: aws_kinesis_firehose_delivery_stream InternalFailure",
+        "body_excerpt": "1.11.0 5.91.0 * aws_kinesis_firehose_delivery_stream correct created firehose stream. My goal was to create a firehose stream which has target iceberg. StatusCode: 500, api error InternalFailure: UnknownError shell module.firehose-to-datalake-iceberg.aws_kinesis_firehose_delivery_stream.this: Still creating... [49m40s elapsed] module.firehose-to-datalake-iceberg.aws_kinesis_firehose_delivery_strea",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2025-03-20T17:06:54Z",
+        "score": 0.202,
+        "band": "weak"
+      },
+      {
+        "number": 44770,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/44770",
+        "title": "Import fails for aws_iam_role_policy_attachment - import ID parsing broken",
+        "body_excerpt": "Command: terraform import aws_iam_role_policy_attachment.attach_ssm_core \\ \"EC2-SSM-CodeDeploy,arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore\" Parse role name and policy ARN separately Actual: Sends \"EC2-SSM-CodeDeploy,arn:aws:iam::aws:policy\" as role name to AWS API Error. Debug log shows: RoleName=EC2-SSM-CodeDeploy%2Carn%3Aaws%3Aiam%3A%3Aaws%3Apolicy \u2502 Error: reading IAM Role Policy Attac",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-10-22T17:38:49Z",
+        "score": 0.196,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11448,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}

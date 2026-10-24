@@ -189,6 +189,14 @@ side. Only cases 06, 11 and 20 changed across the three runs, and each change fo
 skill change. The other 17 cases gave identical decisions and labels three times. That is what makes a
 golden replay usable as a drift detector: with the configuration fixed, a changed row means the model changed.
 
+[Corrected after run4 and run5: this does not hold.
+- Between run3 and run4, the only agent-facing changes were two lines of `AGENTS.md` and new
+  `DESIGN.md` and `README.md` files, which the agent never opened. Even so, cases 06, 19 and 20 changed.
+- Between run4 and run5, which used the same configuration, case 06 changed.
+
+A changed row can be ordinary variance, so drift has to be judged from pass rates over repeated runs.
+See `notes-run5.md`.]
+
 **Cost.** Mean USD 0.08 per agent run (Claude Code's estimate), down from 0.13. The drop starts at case 03
 and matches prompt-cache reuse within the run, not a configuration change.
 

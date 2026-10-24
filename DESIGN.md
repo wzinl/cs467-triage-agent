@@ -23,14 +23,12 @@ and labeler errors. The goal is a useful first response in minutes, not fewer hu
 ## 2. Design
 
 **Rule placement.**
-- *Facts* (layout, label meanings, venues) are in `AGENTS.md`. The *procedure* is in
-  `.claude/skills/issue-triage/SKILL.md`.
+- *Facts* (layout, label meanings, venues) are in `AGENTS.md`; the *procedure* is in `.claude/skills/issue-triage/SKILL.md`.
 - *Non-judgement checks* are scripts. `triage_checks.py` checks the form, the versions, newer fixes, the labels
   the regex labeler will add, and finds duplicates with TF-IDF. `validate_plan.py` checks labels against the
   allowlist and the taxonomy, and checks the comment's footer, mentions, links and claims.
 - *Hard limits* are in the frontmatter of `.github/workflows/issue-triage.md`, compiled into `issue-triage.lock.yml`.
-
-The model decides only which candidate is really a duplicate, and how to word the comment.
+- The model judges the rest: real duplicates, type and regression labels, whether to comment, and the wording.
 
 **Rejected alternative.** A Dosu-style comment with a root cause and a workaround on every issue.
 - Upstream had to retract a confident, wrong AI triage answer (#48821). A wrong diagnosis costs more than
@@ -51,7 +49,7 @@ read-only commands. It never runs for maintainers or bots.
 `replay.py` runs the lock file's model, tools and prompt, with gh-aw's own safe-outputs server and
 validators. Each case sees only the original issue body, earlier issues, and releases published by then.
 
-**Results.** Run1: 17/20. Run2: 17/20. Run3: 18/20. Final run on this commit's configuration: RUN4/20.
+**Results.** Run1: 17/20. Run2: 17/20. Run3: 18/20. The submitted configuration scored 16 and 17 in runs 4 and 5.
 `notes-run*.md` explains every failure.
 - **Case 06 (skill rule wrong).** Retests were allowed only for versions more than three minor releases
   behind, so the agent ignored a listed fix. Fixed with `newer_fixes`.
@@ -64,7 +62,8 @@ validators. Each case sees only the original issue body, earlier issues, and rel
 - **Harness bug.** Label objects were rejected before validation. It was fixed, and the outputs were
   re-applied without new model calls.
 - **Permission denials.** In run1, 8 runs tried to write a file with Bash and were denied. Least privilege held.
-- **Adversarial cases 16–18** held in every run. Across runs, only cases whose rules changed moved (`drift.md`).
+- **Variance.** With no rule change, 19 and 20 flipped between runs 3 and 4, and 06 between the identical runs
+  4 and 5, where the model once overrode a skill rule (`drift.md`). Adversarial cases 16–18 held in all five runs.
 
 ## 4. Governance
 
@@ -77,7 +76,7 @@ validators. Each case sees only the original issue body, earlier issues, and rel
 | Budgets | `timeout-minutes` 10, agent job 20; `max-turns` 30; `max-ai-credits` 100 (USD 1); `max-daily-ai-credits` 3000 (USD 30); `user-rate-limit` 3 per hour (experimental) | Turns tested; the rest untested |
 | Audit trail | Actions logs and artifacts (prompt, transcript, `plan.json`, `checks.json`); replay `actual/` and `logs/` | Replay tested; Actions untested |
 | Kill switch | Label `triage-agent-paused` on any issue (`skip-if-match`); disable the workflow; `stop-after: +90d` | Untested offline |
-| Drift detection | Model pinned (`engine.model`); traces record the served model and CLI version; `score.py compare` | Done across 4 runs. Proposed: weekly replay |
+| Drift detection | Model pinned (`engine.model`); traces record the served model and CLI version; `score.py compare` gives per-case pass rates | 5 runs done. Proposed: weekly replay |
 | Accountability | `.github/CODEOWNERS` (@wzinl); `CONTRIBUTING.md` requires a replay, and a second approval to widen limits | Enforcing it needs branch protection (proposed) |
 
 **Untrusted inputs:** the issue title and body, every corpus title and body (`prepare_context.py` copies them
@@ -96,7 +95,7 @@ one misleading comment per issue.
 - **Data:** the event; issues (open, plus closed in the last 180 days) via `gh issue list`; `CHANGELOG.md`;
   `website/docs`; the labeler configs; `labels-*.tf`.
 - **Secrets:** `ANTHROPIC_API_KEY`, and `GITHUB_TOKEN`, which can write only in the `safe_outputs` job.
-- **Logs and evals:** Actions artifacts; `evals/golden` (20 cases, 4 runs); `evals/metrics`. **Owner:** @wzinl.
+- **Logs and evals:** Actions artifacts; `evals/golden` (20 cases, 5 runs); `evals/metrics`. **Owner:** @wzinl.
 
 ## 6. Five questions
 
@@ -108,8 +107,9 @@ one misleading comment per issue.
 
 **Q2. Model drift on a golden task.**
 - The model is pinned, and each trace records the served model and CLI version.
-- Replay the golden set on every change to the agent (`CONTRIBUTING.md`) and weekly (proposed).
-  `score.py compare` flags any case whose decision or labels changed. A change with no config change is drift.
+- Replay the golden set on every change to the agent (`CONTRIBUTING.md`) and weekly (proposed). Runs 4 and 5
+  show that one run is noisy: a single changed case is not drift. Use `score.py compare` over several runs, and
+  treat a pass rate below the baseline (16–17 of 20, with 16 cases stable over five runs) as drift.
 - Response: add `triage-agent-paused`, read the transcript diff, then pin the previous model or fix the skill.
   Never edit an `expected.json`.
 
@@ -139,6 +139,7 @@ one misleading comment per issue.
 - There has been no run in Actions. The firewall, credit guardrails, rate limit, kill switch, threat
   detection and real `safe_outputs` writes are untested. The replay used CLI 2.1.310, not the pinned 2.1.300.
 - Search misses misspelled resources. Release notes match only issues that name an `aws_*` resource.
+- Run-to-run variance. Proposed: move the retest rule and a regression signal into the scripts (`notes-run5.md`).
 - The gains after run1 come from cases that shaped the fixes. Maintainers were not consulted on scope or tone.
 
 ## 8. AI-use statement

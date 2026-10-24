@@ -7,10 +7,11 @@ does not include this directory, so the agent never sees the expected outcomes.
 |---|---|
 | `data/` | Frozen read-only data from hashicorp/terraform-provider-aws, fetched 2026-10-24 (`fetch_meta.json`) |
 | `metrics/` | Repository metrics that motivate and size the agent (`results.md`) |
-| `golden/cases/NN-*/` | 18 golden cases: `input.json` (the event) and `expected.json` (written before any run) |
+| `golden/cases/NN-*/` | 20 golden cases: `input.json` (the event) and `expected.json` (written before any run) |
 | `golden/actual/<run>/` | What the agent did in each replay: tool trace, raw safe outputs, what would reach GitHub |
 | `golden/logs/<run>/` | Full Claude Code stream-JSON transcripts, one per case |
-| `golden/results-<run>.md` | Actual against expected, case by case, with every failure explained |
+| `golden/results-<run>.md` | Actual against expected, case by case, with the hand-written failure analysis from `notes-<run>.md` |
+| `golden/drift.md` | Each case's decision, labels and pass rate across all five runs (`score.py compare`) |
 | `golden/dev-smoke/` | The one development run (case 08) used to debug the harness. It is not scored |
 | `golden/duplicate_recall.md` | Offline recall of the duplicate search against 28 maintainer-confirmed duplicates |
 
@@ -26,7 +27,21 @@ python3 evals/golden/build_cases.py
 # 4. Dry-run replay through the compiled workflow (about USD 0.15 per case), then score
 GH_AW_JS=<gh-aw v0.93.x checkout>/actions/setup/js REPLAY_RUN=run1 python3 evals/golden/replay.py run
 python3 evals/golden/score.py run1
+python3 evals/golden/score.py compare run1 run2 run3 run4 run5
 ```
+
+## Runs
+
+| Run | Configuration | Outcome |
+|---|---|---|
+| run1 | as first committed (d5e28a7); cases 19–20 added after it with the same configuration | 17/20 |
+| run2 | after the run1 fixes (a896ad3) | 17/20 |
+| run3 | after the case 11 fix (19ba7d3) | 18/20 |
+| run4 | the submitted configuration, including `user-rate-limit` | 16/20 |
+| run5 | the same configuration again, to measure run-to-run variance | 17/20 |
+
+Runs 2–5 were measured on cases that shaped the fixes, so they overstate how well the agent would do on
+new issues. Run1 and the two held-out cases are the fairest estimate.
 
 ## How the replay works
 
@@ -43,6 +58,7 @@ actually run. For each case it:
    would have in Actions;
 6. passes the recorded outputs through gh-aw's own label validator and content sanitizer
    (`apply_safe_outputs.cjs`), with the lock file's allowed domains, to get what would reach GitHub.
+   `replay.py reapply` repeats this step on recorded outputs without calling the model.
 
 ## Leakage controls
 
@@ -53,8 +69,10 @@ actually run. For each case it:
 - **Corpus.** The duplicate-search corpus holds only issues created before `as_of`, with their
   open or closed state recomputed at `as_of`. The corpus never contains labels.
 - **Resources and releases.** The known-resource list holds only resources whose docs page existed
-  at `as_of`. Release notes come from `CHANGELOG.md`, but only for releases dated on or before `as_of`.
-- **Expectations.** Every `expected.json` was committed (5ad9a88) before the first scored run. Its
+  at `as_of`. CHANGELOG dates have no time of day. So `triage_checks.py` counts only releases from earlier days,
+  plus a same-day release when the reporter says they are on it. Run1's case 20 showed why this matters.
+  The replay's CHANGELOG.md drops later releases, and `score.py` checks that the agent never reads it directly.
+- **Expectations.** Every `expected.json` was committed before its first run: cases 01–18 in 5ad9a88, 19–20 in befdb33. Its
   `maintainer_history` field records what maintainers actually did, which the agent never sees.
 
 What still leaks: the issue forms, labeler config and docs are from 2026-10-16, not from each case's

@@ -31,9 +31,9 @@ def decision_of(actual):
     return "noop"
 
 
-def score(cid):
+def score(cid, run=RUN):
     exp = json.loads((HERE / "cases" / cid / "expected.json").read_text())
-    path = HERE / "actual" / RUN / f"{cid}.json"
+    path = HERE / "actual" / run / f"{cid}.json"
     if not path.exists():
         return {"id": cid, "ran": False, "outcome_ok": False, "problems": ["not run"], "controls": []}
     act = json.loads(path.read_text())
@@ -98,18 +98,26 @@ def score(cid):
 
 
 def compare(runs):
-    """Per-case decision and labels across runs; a changed row with no config change between runs is drift."""
-    out = [f"# Decisions across runs: {', '.join(runs)}", "", "| case | " + " | ".join(runs) + " | changed |",
-           "|---|" + "---|" * (len(runs) + 1)]
+    """Per-case decision, labels and pass/fail across runs. Decisions vary between runs of one configuration,
+    so drift is a fall in a case's pass rate beyond that variance, not any changed row."""
+    out = [f"# Decisions across runs: {', '.join(runs)}", "", "Each cell: decision, labels added, and pass or FAIL "
+           "against expected.json.", "", "| case | " + " | ".join(runs) + " | passes | changed |",
+           "|---|" + "---|" * (len(runs) + 2)]
+    totals = [0] * len(runs)
     for case in sorted(p.name for p in (HERE / "cases").iterdir()):
-        cells = []
-        for run in runs:
+        cells, passes, ran = [], 0, []
+        for k, run in enumerate(runs):
             path = HERE / "actual" / run / f"{case}.json"
-            act = json.loads(path.read_text()) if path.exists() else None
-            cells.append(f"{decision_of(act)} {', '.join(sorted((act.get('applied') or {}).get('labels') or []))}".strip()
-                         if act else "not run")
-        ran = [c for c in cells if c != "not run"]
-        out.append(f"| {case} | " + " | ".join(cells) + f" | {'**yes**' if len(set(ran)) > 1 else ''} |")
+            if not path.exists():
+                cells.append("not run")
+                continue
+            act, ok = json.loads(path.read_text()), score(case, run)["outcome_ok"]
+            what = f"{decision_of(act)} {', '.join(sorted((act.get('applied') or {}).get('labels') or []))}".strip()
+            ran.append(what)
+            passes, totals[k] = passes + ok, totals[k] + ok
+            cells.append(f"{what} ({'pass' if ok else 'FAIL'})")
+        out.append(f"| {case} | " + " | ".join(cells) + f" | {passes}/{len(ran)} | {'**yes**' if len(set(ran)) > 1 else ''} |")
+    out.append("| **total passing** | " + " | ".join(str(t) for t in totals) + " | | |")
     (HERE / "drift.md").write_text("\n".join(out) + "\n")
     print("\n".join(out))
 

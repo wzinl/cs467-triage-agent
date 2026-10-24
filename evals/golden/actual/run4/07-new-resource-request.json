@@ -1,0 +1,201 @@
+{
+  "id": "07-new-resource-request",
+  "replayed_at": "2026-10-24T04:30:02Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11741,
+    "resources": 2264
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\", \"description\": \"Run triage checks\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\", \"new_string\": \"  \\\"decision\\\": \\\"labels\\\",\\n  \\\"labels\\\": [\\\"new-resource\\\"],\\n  \\\"comment\\\": null,\\n  \\\"dupl"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\", \"description\": \"Validate triage plan\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_labels",
+        "input": "{\"labels\": [{\"name\": \"new-resource\", \"rationale\": \"Requests aws_marketplaceagreement_agreement, which is not in resources.txt.\", \"confidence\": \"HIGH\"}], \"item_number\": \"50176\"}"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 10,
+      "total_cost_usd": 0.1305386,
+      "duration_ms": 15181,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "labels": [
+        {
+          "name": "new-resource",
+          "rationale": "Requests aws_marketplaceagreement_agreement, which is not in resources.txt.",
+          "confidence": "HIGH"
+        }
+      ],
+      "item_number": "50176",
+      "type": "add_labels"
+    }
+  ],
+  "applied": {
+    "labels": [
+      "new-resource"
+    ],
+    "comment": null,
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "labels",
+    "labels": [
+      "new-resource"
+    ],
+    "comment": null,
+    "duplicate_of": [],
+    "reason": "Complete new-resource request; aws_marketplaceagreement_agreement is not in resources.txt; no duplicate (all similar issues weak)."
+  },
+  "checks": {
+    "issue": {
+      "number": 50176,
+      "title": "[New Resource]: aws_marketplaceagreement_agreement",
+      "author_association": "NONE",
+      "labels_at_open": []
+    },
+    "as_of": "2026-09-26T18:23:51+00:00",
+    "form": {
+      "template": "Request Net New Functionality",
+      "missing_required": [],
+      "empty_optional": [],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_marketplaceagreement_agreement",
+          "known": false,
+          "service_label": null
+        },
+        {
+          "name": "aws_eks_addon",
+          "known": true,
+          "service_label": "service/eks"
+        },
+        {
+          "name": "aws_eks_cluster",
+          "known": true,
+          "service_label": "service/eks"
+        }
+      ],
+      "regex_labeler_would_apply": [
+        "service/eks"
+      ],
+      "primary_service_label": null
+    },
+    "versions": {
+      "terraform": null,
+      "provider": null,
+      "latest_release": "6.66.0",
+      "latest_release_date": "2026-09-21",
+      "provider_status": "not_reported",
+      "newer_release_notes": [],
+      "newer_fixes": []
+    },
+    "similar_issues": [
+      {
+        "number": 41370,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/41370",
+        "title": "[New Resource]: Bedrock Marketplace Deployments",
+        "body_excerpt": "Please implement all resources needed to deploy from Bedrock Marketplace * aws_bedrock_marketplace_deployment * aws_bedrock_marketplace_model terraform No",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2025-02-12T20:11:17Z",
+        "score": 0.186,
+        "band": "weak"
+      },
+      {
+        "number": 25928,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/25928",
+        "title": "AWS: Allow for Glue Marketplace Connector-type Connections",
+        "body_excerpt": "AWS Glue Studio allows for the creation of Glue Connections that use an AWS Marketplace Connector for Glue. When we try to create a Glue Connection that uses a marketplace connector (Google Bigquery connector for AWS Glue) we're unable to define it in TF because the only [supported connection types]( do not include the type \"MARKETPLACE\" or the ability to select an existing marketplace connector. ",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2022-07-21T23:38:33Z",
+        "score": 0.164,
+        "band": "weak"
+      },
+      {
+        "number": 45812,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/45812",
+        "title": "Add AWS Private Marketplace support",
+        "body_excerpt": "AWS Private Marketplace We would like to manage the AWS Marketplace products available for purchase by our organization members using IaC. This feature was previously brought up in [#20601]( but received no traction. I would like this feature reconsidered because it is the easiest solution to curate AI model purchases in Bedrock. hcl aws_private_marketplace_integration { service_linked_role = true",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2026-01-05T20:03:46Z",
+        "score": 0.14,
+        "band": "weak"
+      },
+      {
+        "number": 43835,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/43835",
+        "title": "Resource for foundation model agreement in aws bedrock",
+        "body_excerpt": "aws_bedrock_foundation_model_agreement I would like to request the resource *aws_bedrock_foundation_model_agreement*, so that we can use terraform to enable foundational models on accounts in an organisation without having to login into every single one of those accounts for client environments with excessive IAM permissions. it should use for the creation : for delete: This would facilitate the u",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-08-12T14:29:33Z",
+        "score": 0.132,
+        "band": "weak"
+      },
+      {
+        "number": 41818,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/41818",
+        "title": "[Bug]: aws_imagebuilder_image_recipe does not accept marketplace component ARN (invalid ARN)",
+        "body_excerpt": "1.11.2 5.90.0 aws_imagebuilder_image_recipe The component from a marketplace subscription should be added to the provided EC2 Image Builder recipe. The error occurs when we try to add a component to our image recipes: arn:aws:imagebuilder:eu-central-1:aws-marketplace:component/crowdstrike-falcon-install-linux-prod-nhzsem4gwwfja/1.2.2/1 We verified that the subscription works and can be added as a ",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-03-13T11:37:32Z",
+        "score": 0.12,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11741,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}

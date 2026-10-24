@@ -1,0 +1,262 @@
+{
+  "id": "13-older-major-version",
+  "replayed_at": "2026-10-24T04:31:24Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11490,
+    "resources": 2245
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "cat .claude/skills/issue-triage/references/comment-format.md; cat /tmp/gh-aw/agent/plan.json",
+      "cat > /tmp/gh-aw/agent/plan.json <<'EOF'\n{\"decision\":\"comment\",\"labels\":[\"bug\",\"service/lambda\",\"waiting-response\"],\"comment\":\"Thanks for the report, @Tripod1073. You are on provider v5.100.0, and the latest release is v6.58.0.\\nCould you check whether this still happens on v6.58.0? If it does, please add the output from that run.\\n\\nTo reproduce this, the maintainers will also need:\\n\\n- A sample Terraform configuration (the `aws_lambda_function` block with `image_uri`)\\n\\nCould you add these to the issue description?\\n\\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._\",\"duplicate_of\":[],\"reason\":\"Bug on older-major provider v5.100.0 with required sample configuration missing; labels bug, service/lambda, waiting-response.\"}\nEOF\npython3 .claude/skills/issue-triage/scripts/validate_plan.py",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"cat .claude/skills/issue-triage/references/comment-format.md; cat /tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"cat > /tmp/gh-aw/agent/plan.json <<'EOF'\\n{\\\"decision\\\":\\\"comment\\\",\\\"labels\\\":[\\\"bug\\\",\\\"service/lambda\\\",\\\"waiting-response\\\"],\\\"comment\\\":\\\"Thanks for the report, @Tripod1073. You are on provider v5.100.0, and the latest release is v6.58.0.\\\\nCould you check whether this still happen"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"{\\n  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\\n}\", \"new_string\": \"{\\\"decision\\\":\\\"comment\\\",\\\"labels\\\":[\\\"bug\\\",\\\"service/lambda\\\",\\\"waiting-response\\\"],\\"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_labels",
+        "input": "{\"labels\": [\"bug\", \"service/lambda\", \"waiting-response\"], \"item_number\": \"49310\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_comment",
+        "input": "{\"body\": \"Thanks for the report, @Tripod1073. You are on provider v5.100.0, and the latest release is v6.58.0.\\nCould you check whether this still happens on v6.58.0? If it does, please add the output from that run.\\n\\nTo reproduce this, the maintainers will also need:\\n\\n- A sample Terraform config"
+      }
+    ],
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "toolu_019JFUcZMMubRJRZUAaVYVjs",
+        "tool_input": {
+          "command": "cat > /tmp/gh-aw/agent/plan.json <<'EOF'\n{\"decision\":\"comment\",\"labels\":[\"bug\",\"service/lambda\",\"waiting-response\"],\"comment\":\"Thanks for the report, @Tripod1073. You are on provider v5.100.0, and the latest release is v6.58.0.\\nCould you check whether this still happens on v6.58.0? If it does, please add the output from that run.\\n\\nTo reproduce this, the maintainers will also need:\\n\\n- A sample Terraform configuration (the `aws_lambda_function` block with `image_uri`)\\n\\nCould you add these to the issue description?\\n\\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._\",\"duplicate_of\":[],\"reason\":\"Bug on older-major provider v5.100.0 with required sample configuration missing; labels bug, service/lambda, waiting-response.\"}\nEOF\npython3 .claude/skills/issue-triage/scripts/validate_plan.py"
+        }
+      }
+    ],
+    "result": {
+      "subtype": "success",
+      "num_turns": 12,
+      "total_cost_usd": 0.1640453,
+      "duration_ms": 21748,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "labels": [
+        "bug",
+        "service/lambda",
+        "waiting-response"
+      ],
+      "item_number": "49310",
+      "type": "add_labels"
+    },
+    {
+      "body": "Thanks for the report, @Tripod1073. You are on provider v5.100.0, and the latest release is v6.58.0.\nCould you check whether this still happens on v6.58.0? If it does, please add the output from that run.\n\nTo reproduce this, the maintainers will also need:\n\n- A sample Terraform configuration (the `aws_lambda_function` block with `image_uri`)\n\nCould you add these to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+      "item_number": "49310",
+      "type": "add_comment",
+      "temporary_id": "aw_oUR6yHhi"
+    }
+  ],
+  "applied": {
+    "labels": [
+      "bug",
+      "service/lambda",
+      "waiting-response"
+    ],
+    "comment": "Thanks for the report, @Tripod1073. You are on provider v5.100.0, and the latest release is v6.58.0.\nCould you check whether this still happens on v6.58.0? If it does, please add the output from that run.\n\nTo reproduce this, the maintainers will also need:\n\n- A sample Terraform configuration (the `aws_lambda_function` block with `image_uri`)\n\nCould you add these to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "comment",
+    "labels": [
+      "bug",
+      "service/lambda",
+      "waiting-response"
+    ],
+    "comment": "Thanks for the report, @Tripod1073. You are on provider v5.100.0, and the latest release is v6.58.0.\nCould you check whether this still happens on v6.58.0? If it does, please add the output from that run.\n\nTo reproduce this, the maintainers will also need:\n\n- A sample Terraform configuration (the `aws_lambda_function` block with `image_uri`)\n\nCould you add these to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "duplicate_of": [],
+    "reason": "Bug on older-major provider v5.100.0 with required sample configuration missing; labels bug, service/lambda, waiting-response."
+  },
+  "checks": {
+    "issue": {
+      "number": 49310,
+      "title": "aws_lambda_function: image_uri is not reset to the previous value when UpdateFunctionCode fails (unlike s3_bucket/s3_key/s3_object_version, fixed in #42695/#42829)",
+      "author_association": "NONE",
+      "labels_at_open": []
+    },
+    "as_of": "2026-08-06T02:10:29+00:00",
+    "form": {
+      "template": "Report a Bug",
+      "missing_required": [
+        "Sample Terraform Configuration"
+      ],
+      "empty_optional": [],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_lambda_function",
+          "known": true,
+          "service_label": "service/lambda"
+        }
+      ],
+      "regex_labeler_would_apply": [],
+      "primary_service_label": "service/lambda"
+    },
+    "versions": {
+      "terraform": null,
+      "provider": "5.100.0",
+      "latest_release": "6.58.0",
+      "latest_release_date": "2026-08-05",
+      "provider_status": "older_major",
+      "newer_release_notes": [
+        {
+          "version": "6.4.0",
+          "date": "2025-07-17",
+          "note": "resource/aws_lambda_function: Fix `waiting for Lambda Function (...) version publish: unexpected state '', wanted target 'Successful'` errors on Update. This fixes a regression introduced in [v6.2.0](https://github.com/h"
+        },
+        {
+          "version": "6.9.0",
+          "date": "2025-08-14",
+          "note": "data-source/aws_lambda_function: Fix missing value for `reserved_concurrent_executions` attribute when a published version exists. This functionality requires the `lambda:GetFunctionConcurrency` IAM permission ([#43753]("
+        },
+        {
+          "version": "6.9.0",
+          "date": "2025-08-14",
+          "note": "resource/aws_lambda_function: Fix missing value for `reserved_concurrent_executions` attribute when a published version exists. This functionality requires the `lambda:GetFunctionConcurrency` IAM permission ([#43753](htt"
+        },
+        {
+          "version": "6.26.0",
+          "date": "2025-12-10",
+          "note": "resource/aws_lambda_function: Fix persistent diff when `image_config` has `null` values set in config ([#45511](https://github.com/hashicorp/terraform-provider-aws/issues/45511))"
+        },
+        {
+          "version": "6.9.0",
+          "date": "2025-08-14",
+          "note": "resource/aws_lambda_function: Add resource identity support ([#43821](https://github.com/hashicorp/terraform-provider-aws/issues/43821))"
+        },
+        {
+          "version": "6.12.0",
+          "date": "2025-09-04",
+          "note": "data-source/aws_lambda_function: Add `source_kms_key_arn` attribute ([#44080](https://github.com/hashicorp/terraform-provider-aws/issues/44080))"
+        },
+        {
+          "version": "6.12.0",
+          "date": "2025-09-04",
+          "note": "resource/aws_lambda_function: Add `source_kms_key_arn` argument ([#44080](https://github.com/hashicorp/terraform-provider-aws/issues/44080))"
+        },
+        {
+          "version": "6.17.0",
+          "date": "2025-10-16",
+          "note": "resource/aws_lambda_function: Reset non-API attributes (`source_code_hash`, `s3_bucket`, `s3_key`, `s3_object_version` and `filename`) to their previous values when an update operation fails ([#42829](https://github.com/"
+        }
+      ],
+      "newer_fixes": [
+        "6.4.0",
+        "6.9.0",
+        "6.26.0"
+      ]
+    },
+    "similar_issues": [
+      {
+        "number": 42695,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/42695",
+        "title": "aws_lambda_function still updates non API properties on update errors",
+        "body_excerpt": "* aws_lambda_function s3_bucket and s3_key are not updated s3_bucket and s3_key are updated > Error: updating Lambda Function (lambda-function) code: operation error Lambda: UpdateFunctionCode, https response error StatusCode: 403, RequestID: , api error AccessDeniedException: Your access has been denied by S3, please make sure your request credentials have permission to GetObject for binaries-buc",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-05-21T05:14:00Z",
+        "score": 0.279,
+        "band": "weak"
+      },
+      {
+        "number": 29870,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/29870",
+        "title": "[Bug]: AccessDeniedException for lambda s3_key but state shows the new s3_key",
+        "body_excerpt": "0.14.10 4.8.0 aws_lambda_function When the aws_lambda_function uses an s3_key and s3_bucket argument to get the binary from s3, and there is an AccessDeniedException trying to get the s3_key the deploy should fail and the state should still reflect the old s3_key When the aws_lambda_function uses an s3_key and s3_bucket argument to get the binary from s3, and there is an AccessDeniedException tryi",
+        "state": "closed",
+        "state_reason": "not_planned",
+        "created_at": "2023-03-08T19:21:40Z",
+        "score": 0.275,
+        "band": "weak"
+      },
+      {
+        "number": 42699,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/42699",
+        "title": "Discrepancy Between Updated s3_object_version in Terraform State and Lambda GUI",
+        "body_excerpt": "aws_lambda_function or the data \"aws_s3_object\" When the runtime management configuration was set to \"Manual,\" Terraform failed to update the runtime version from Python 3.12 to 3.13. If the Lambda function does not reflect the new source code, the Terraform state should not contain the updated s3_object_version, ensuring that subsequent successful apply operations trigger the source code update. ",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2025-05-21T11:48:24Z",
+        "score": 0.239,
+        "band": "weak"
+      },
+      {
+        "number": 29043,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/29043",
+        "title": "[Bug]: `aws_lambda_function` requires code even with publish disabled",
+        "body_excerpt": "1.3.7 4.51.0 * aws_lambda_function With publish set to false, the filename, image_uri or s3_bucket were allowed to be not set (v4.50.0) Returns error during validate: shell \u2502 Error: Invalid combination of arguments \u2502 \u2502 with aws_lambda_function.my_lambda, \u2502 on katalog-lambdas.tf line 23, in resource \"aws_lambda_function\" \"my_lambda\": \u2502 23: resource \"aws_lambda_function\" \"my_lambda\" { \u2502 \u2502 \"filename\"",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2023-01-23T13:41:25Z",
+        "score": 0.23,
+        "band": "weak"
+      },
+      {
+        "number": 43568,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/43568",
+        "title": "update lambda function with s3 key in another region failed",
+        "body_excerpt": "* resource aws_lambda_function * data aws_s3_object can apply. lambda update the bucket policy and and deploy policy is all correct, same set up can deploy to lambda in the same region different account as the s3 key. Error: updating Lambda Function code: operation error Lambda: UpdateFunctionCode, https response error StatusCode: 400, RequestID: xxxxxxxxxxxxxx, InvalidParameterValueException: Err",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-07-28T04:25:41Z",
+        "score": 0.207,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11490,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}

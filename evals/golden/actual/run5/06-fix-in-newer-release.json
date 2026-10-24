@@ -1,0 +1,244 @@
+{
+  "id": "06-fix-in-newer-release",
+  "replayed_at": "2026-10-24T04:36:04Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11584,
+    "resources": 2250
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "cat /tmp/gh-aw/agent/issue.json; python3 .claude/skills/issue-triage/scripts/triage_checks.py; cat /tmp/gh-aw/agent/plan.json; cat .claude/skills/issue-triage/references/comment-format.md",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"cat /tmp/gh-aw/agent/issue.json; python3 .claude/skills/issue-triage/scripts/triage_checks.py; cat /tmp/gh-aw/agent/plan.json; cat .claude/skills/issue-triage/references/comment-format.md\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\", \"new_string\": \"  \\\"decision\\\": \\\"comment\\\",\\n  \\\"labels\\\": [\\\"waiting-response\\\"],\\n  \\\"comment\\\": \\\"Thanks f"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_labels",
+        "input": "{\"labels\": [{\"name\": \"waiting-response\", \"rationale\": \"Asking reporter to confirm behaviour on latest release v6.61.0.\", \"confidence\": \"MEDIUM\"}], \"item_number\": \"49594\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_comment",
+        "input": "{\"body\": \"Thanks for the report, @kossy-kinto. You are on provider v6.60.0, and the latest release is v6.61.0.\\nv6.61.0 includes fixes for `aws_bedrockagentcore_harness`.\\nCould you check whether this still happens on v6.61.0? If it does, please add the output from that run.\\n\\n_Automated first-pass"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 9,
+      "total_cost_usd": 0.0904043,
+      "duration_ms": 16704,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "labels": [
+        {
+          "name": "waiting-response",
+          "rationale": "Asking reporter to confirm behaviour on latest release v6.61.0.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "item_number": "49594",
+      "type": "add_labels"
+    },
+    {
+      "body": "Thanks for the report, @kossy-kinto. You are on provider v6.60.0, and the latest release is v6.61.0.\nv6.61.0 includes fixes for `aws_bedrockagentcore_harness`.\nCould you check whether this still happens on v6.61.0? If it does, please add the output from that run.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+      "item_number": "49594",
+      "type": "add_comment",
+      "temporary_id": "aw_9epGX6kh"
+    }
+  ],
+  "applied": {
+    "labels": [
+      "waiting-response"
+    ],
+    "comment": "Thanks for the report, @kossy-kinto. You are on provider v6.60.0, and the latest release is v6.61.0.\nv6.61.0 includes fixes for `aws_bedrockagentcore_harness`.\nCould you check whether this still happens on v6.61.0? If it does, please add the output from that run.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "comment",
+    "labels": [
+      "waiting-response"
+    ],
+    "comment": "Thanks for the report, @kossy-kinto. You are on provider v6.60.0, and the latest release is v6.61.0.\nv6.61.0 includes fixes for `aws_bedrockagentcore_harness`.\nCould you check whether this still happens on v6.61.0? If it does, please add the output from that run.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "duplicate_of": [],
+    "reason": "Bug on v6.60.0; v6.61.0 has a release note for aws_bedrockagentcore_harness, so ask to confirm on latest. No duplicate (49404 is generic and closed)."
+  },
+  "checks": {
+    "issue": {
+      "number": 49594,
+      "title": "[Bug]: aws_bedrockagentcore_harness: service-populated memory retrieval_config makes every apply fail with \"inconsistent result after apply\"",
+      "author_association": "NONE",
+      "labels_at_open": []
+    },
+    "as_of": "2026-08-20T04:06:35+00:00",
+    "form": {
+      "template": "Report a Bug",
+      "missing_required": [],
+      "empty_optional": [],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_bedrockagentcore_harness",
+          "known": true,
+          "service_label": "service/bedrockagentcore"
+        },
+        {
+          "name": "aws_iam_policy_document",
+          "known": true,
+          "service_label": "service/iam"
+        },
+        {
+          "name": "aws_iam_role",
+          "known": true,
+          "service_label": "service/iam"
+        },
+        {
+          "name": "aws_iam_role_policy",
+          "known": true,
+          "service_label": "service/iam"
+        },
+        {
+          "name": "aws_bedrockagentcore_memory",
+          "known": true,
+          "service_label": "service/bedrockagentcore"
+        },
+        {
+          "name": "aws_bedrockagentcore_memory_strategy",
+          "known": true,
+          "service_label": "service/bedrockagentcore"
+        },
+        {
+          "name": "aws_bedrockagentcore_gateway_target",
+          "known": true,
+          "service_label": "service/bedrockagentcore"
+        }
+      ],
+      "regex_labeler_would_apply": [
+        "bug",
+        "service/bedrockagentcore",
+        "service/iam"
+      ],
+      "primary_service_label": "service/bedrockagentcore"
+    },
+    "versions": {
+      "terraform": "1.14.3",
+      "provider": "6.60.0",
+      "latest_release": "6.61.0",
+      "latest_release_date": "2026-08-19",
+      "provider_status": "current",
+      "minor_releases_behind": 1,
+      "newer_release_notes": [
+        {
+          "version": "6.61.0",
+          "date": "2026-08-19",
+          "note": "resource/aws_bedrockagentcore_harness: Fix `Provider produced inconsistent result after apply` error for `environment` ([#48815](https://github.com/hashicorp/terraform-provider-aws/issues/48815))"
+        },
+        {
+          "version": "6.61.0",
+          "date": "2026-08-19",
+          "note": "resource/aws_bedrockagentcore_harness: Adds attribute `environment_actual` ([#48815](https://github.com/hashicorp/terraform-provider-aws/issues/48815))"
+        },
+        {
+          "version": "6.61.0",
+          "date": "2026-08-19",
+          "note": "list-resource/aws_bedrockagentcore_harness: Prevents error when remote resource disappears during List ([#49446](https://github.com/hashicorp/terraform-provider-aws/issues/49446))"
+        }
+      ],
+      "newer_fixes": [
+        "6.61.0"
+      ]
+    },
+    "similar_issues": [
+      {
+        "number": 49404,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/49404",
+        "title": "AgentCore Harness Creation Fails with \"Provider produced inconsistent result after apply\"",
+        "body_excerpt": "Resource: aws_bedrockagentcore_harness [Harness Definition]( I would expect that it will generate the listed outputs; the harness ARNs Error: Provider produced inconsistent result after apply I have provided the errors for both harness creation failures. There are 3 errors for each harness and they appear in order; checkov harness then tflint harness Error: Provider produced inconsistent result af",
+        "state": "closed",
+        "state_reason": "duplicate",
+        "created_at": "2026-08-12T00:08:14Z",
+        "score": 0.332,
+        "band": "possible"
+      },
+      {
+        "number": 48496,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/48496",
+        "title": "[Bug]: reading aws_bedrockagentcore_harness fails (UnknownUnionMember) when memory is managedMemoryConfiguration or disabled",
+        "body_excerpt": "- aws_bedrockagentcore_harness Reading an existing aws_bedrockagentcore_harness fails during refresh whenever the harness's memory configuration is **not** the agentCoreMemoryConfiguration union member. The memory field is a tagged union with three members: - agentCoreMemoryConfiguration \u2014 bring-your-own AgentCore Memory - managedMemoryConfiguration \u2014 the harness creates and manages a memory resou",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-06-20T02:22:54Z",
+        "score": 0.265,
+        "band": "weak"
+      },
+      {
+        "number": 48159,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/48159",
+        "title": "[Bug]: aws_bedrockagentcore_harness produces inconsistent result after apply (environment.agentcore_runtime_environment computed fields)",
+        "body_excerpt": "- aws_bedrockagentcore_harness When creating an aws_bedrockagentcore_harness with an environment block (to set network_configuration for VPC mode), terraform apply fails with **\"Provider produced inconsistent result after apply\"**. The API populates several fields under environment[0].agentcore_runtime_environment[0] server-side after creation, but those fields are **not marked Computed** in the p",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-06-02T06:01:14Z",
+        "score": 0.239,
+        "band": "weak"
+      },
+      {
+        "number": 49374,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/49374",
+        "title": "[Bug]: aws_bedrockagentcore_gateway_target: metadata_configuration causes \"Provider produced inconsistent result after apply\" on create, and the one value AWS returns can't be declared",
+        "body_excerpt": "aws_bedrockagentcore_gateway_target Creating an aws_bedrockagentcore_gateway_target without declaring metadata_configuration should succeed, with the provider treating the block as Computed if AWS populates it server-side. Creating the resource without declaring metadata_configuration fails on the very first apply with: Error: Provider produced inconsistent result after apply When applying changes",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2026-08-10T11:05:39Z",
+        "score": 0.174,
+        "band": "weak"
+      },
+      {
+        "number": 49231,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/49231",
+        "title": "[Bug]: aws_bedrockagentcore_memory_strategy \u2014 second strategy on a memory always fails with \"too many results: wanted 1, got 2\"",
+        "body_excerpt": "* aws_bedrockagentcore_memory_strategy Two aws_bedrockagentcore_memory_strategy resources attached to the same aws_bedrockagentcore_memory both apply, and each is recorded in state. The service supports this \u2014 the docs for type note that one strategy of each built-in type may exist per memory. The first strategy applies. Creating a second one fails **after** the API call has already succeeded: the",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-07-31T15:25:08Z",
+        "score": 0.171,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11584,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}
