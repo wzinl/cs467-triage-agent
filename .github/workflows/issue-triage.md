@@ -14,6 +14,11 @@ on:
     max: 1
   stop-after: "+90d"
 
+# One reporter opening many issues in an hour (spam, or a script) triggers at most 3 agent runs.
+user-rate-limit:
+  max-runs-per-window: 3
+  window: 60
+
 permissions:
   contents: read
   issues: read

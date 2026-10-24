@@ -19,8 +19,8 @@ skill and its evaluation. The provider itself does not build here: `go.mod` is p
 | Unit-test the triage scripts | `python3 -m unittest discover .claude/skills/issue-triage/tests` |
 | Recompile the workflow after editing `issue-triage.md` | `gh aw compile issue-triage` (gh-aw v0.93.2), then commit both files |
 | Rebuild golden-case inputs | `python3 evals/golden/build_cases.py` |
-| Replay the golden cases (calls the model) | `python3 evals/golden/replay.py run` |
-| Score the replay | `python3 evals/golden/score.py` |
+| Replay the golden cases (calls the model) | `REPLAY_RUN=<name> python3 evals/golden/replay.py run` |
+| Score a replay, then compare runs for drift | `python3 evals/golden/score.py <name>`, then `score.py compare <run> <run> ...` |
 | Duplicate-search recall | `python3 evals/golden/duplicate_recall.py` |
 | Repository metrics | `python3 evals/metrics/compute_metrics.py` |
 | Upstream build and test (full upstream checkout only) | `make build`, `make test PKG=<service>`, `make quick-fix PKG=<service>` |
@@ -64,7 +64,8 @@ evals/metrics/                            repository metrics and their limits
 
 - Hand-editing `.github/workflows/*.lock.yml`. Edit the `.md` and recompile.
 - Widening the workflow's `permissions`, `network`, `tools`, `safe-outputs` or label allowlist, or
-  removing `skip-roles`, `skip-if-match`, `stop-after` or the timeouts, without a CODEOWNERS review.
+  removing `skip-roles`, `skip-if-match`, `stop-after`, `user-rate-limit`, the credit limits or the timeouts,
+  without a CODEOWNERS review.
 - Giving the agent any way to close, lock, delete, edit or un-label issues, to merge, or to push.
 - Editing generated upstream files (`labeler-issue-triage.yml`, `labels-service.tf`, `CHANGELOG.md`).
 - Committing secrets or tokens. The only secret is `ANTHROPIC_API_KEY`, stored as an Actions secret.
