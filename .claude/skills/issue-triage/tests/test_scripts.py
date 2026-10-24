@@ -55,6 +55,18 @@ AS_OF = datetime(2026, 9, 20, tzinfo=timezone.utc)
 
 
 class Checks(unittest.TestCase):
+    def test_release_dated_same_day_is_not_yet_known(self):
+        # 6.60.0 is dated 2026-08-13; an issue opened at 02:42 that day must not see it (golden case 20).
+        latest = tc.releases(datetime(2026, 8, 13, 2, 42, tzinfo=timezone.utc))[0][0]
+        self.assertEqual(latest, "6.59.0")
+        self.assertEqual(tc.releases(datetime(2026, 8, 14, tzinfo=timezone.utc))[0][0], "6.60.0")
+
+    def test_newer_fix_for_named_resource_is_reported(self):
+        body = BUG.format(ver="6.59.0").replace("aws_s3_bucket", "aws_network_acl_rule")
+        v = tc.version_check(body, datetime(2026, 8, 14, tzinfo=timezone.utc), ["aws_network_acl_rule"])
+        self.assertEqual(v["provider_status"], "current")
+        self.assertEqual(v["newer_fixes"], ["6.60.0"])
+
     def test_empty_configuration_is_missing(self):
         f = tc.form_check(BUG.format(ver="6.60.0"))
         self.assertEqual(f["template"], "Report a Bug")

@@ -45,10 +45,11 @@ Could you add these to the issue description?
 _Automated first-pass triage. A maintainer will review this issue and make every decision on it._
 ```
 
-**Outdated version**
+**Outdated version, or a newer release with a fix for this resource**
 
 ```
 Thanks for the report, @<author>. You are on provider v<reported>, and the latest release is v<latest>.
+[v<newer_fixes[0]> includes fixes for `<resource>`.]
 Could you check whether this still happens on v<latest>? If it does, please add the output from that run.
 
 _Automated first-pass triage. A maintainer will review this issue and make every decision on it._

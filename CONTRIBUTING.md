@@ -12,8 +12,8 @@ contributor guide is in `docs/`.
   Commit both the `.md` and the regenerated `.lock.yml` in the same commit.
 - Every change to the workflow, the skill or `AGENTS.md` must:
   1. pass `python3 -m unittest discover .claude/skills/issue-triage/tests`;
-  2. come with a replay of the golden cases (`python3 evals/golden/replay.py run`, then `score.py`),
-     with the new `evals/golden/results.md` committed. A drop in passing cases needs a written reason in the PR;
+  2. come with a new replay of the golden cases (`REPLAY_RUN=<name> python3 evals/golden/replay.py run`, then
+     `score.py <name>`), with `evals/golden/results-<name>.md` committed. A drop in passing cases needs a written reason in the PR;
   3. be reviewed by a code owner (`.github/CODEOWNERS`). A change that widens permissions, tools,
      network access or safe outputs also needs a second maintainer's approval.
 - When you add a golden case, write and commit its `expected.json` before you run it.

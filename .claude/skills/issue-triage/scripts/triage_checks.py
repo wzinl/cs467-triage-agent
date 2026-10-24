@@ -123,7 +123,9 @@ def releases(as_of):
             m = re.match(r"^## (\d+\.\d+\.\d+) \(([A-Z][a-z]+ \d{1,2}, \d{4})\)", line)
             if m:
                 d = datetime.strptime(m.group(2), "%B %d, %Y").replace(tzinfo=timezone.utc)
-                if d <= as_of:   # releases after the issue was opened did not exist yet
+                # CHANGELOG dates have no time of day, so a release dated the day the issue was opened
+                # may have come out after it. Count only releases from earlier days.
+                if d.date() < as_of.date():
                     current = (m.group(1), d.date().isoformat(), [])
                     out.append(current)
         elif current and line.startswith("* "):
@@ -168,6 +170,7 @@ def version_check(body, as_of, resources=()):
         out["provider_status"] = "not_reported"
     notes.sort(key=lambda n: ("fix" not in n["note"].lower(), vtuple(n["version"])))   # fixes first, oldest first
     out["newer_release_notes"] = notes[:8]
+    out["newer_fixes"] = sorted({n["version"] for n in notes if "fix" in n["note"].lower()}, key=vtuple)
     return out
 
 

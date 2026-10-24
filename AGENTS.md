@@ -46,7 +46,7 @@ evals/metrics/                            repository metrics and their limits
 - Every new issue from a non-maintainer gets `needs-triage` from upstream automation. Only a maintainer removes it.
 - The upstream regex labeler adds `service/*` labels from resource names in list items or
   `resource "aws_..."` blocks. It also adds `bug` for `[Bug]:` titles and `crash` for `panic:`. It often over-labels:
-  maintainers removed a `service/*` label on 114 of 609 non-maintainer issues from June to October 2026.
+  maintainers removed 114 `service/*` labels, on 67 of the 580 non-maintainer issues that got one, from June to October 2026.
 - `waiting-response` is removed automatically when the reporter comments.
 - Usage questions belong on https://discuss.hashicorp.com/c/terraform-providers/tf-aws. Terraform core
   bugs belong in https://github.com/hashicorp/terraform. Security reports go to https://www.hashicorp.com/security.
