@@ -8,6 +8,7 @@ const js = process.env.GH_AW_JS;
 require(path.join(js, "shim.cjs"));
 const { validateLabels } = require(path.join(js, "safe_output_validator.cjs"));
 const { sanitizeContent } = require(path.join(js, "sanitize_content.cjs"));
+const { normalizeIssueIntentLabelInputs } = require(path.join(js, "issue_intents.cjs"));
 
 const [outputsPath, configPath, author] = process.argv.slice(2);
 const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
@@ -22,9 +23,11 @@ for (const line of lines) {
   if (!cfg) { result.rejected.push({ type: key, reason: "not enabled" }); continue; }
   if (cfg.max && used[key] > cfg.max) { result.rejected.push({ type: key, reason: `over max ${cfg.max}` }); continue; }
   if (key === "add_labels") {
-    const v = validateLabels(msg.labels || [], cfg.allowed || [], cfg.max_labels || 3, cfg.blocked || []);
+    // Labels may be plain names or {name, rationale, confidence} objects; add_labels.cjs validates the names.
+    const names = normalizeIssueIntentLabelInputs(msg.labels || []).map(l => (typeof l === "string" ? l : l.name));
+    const v = validateLabels(names, cfg.allowed || [], cfg.max_labels || 3, cfg.blocked || []);
     if (!v.valid) { result.rejected.push({ type: key, reason: v.error, requested: msg.labels }); continue; }
-    const dropped = (msg.labels || []).filter(l => !v.value.includes(l));
+    const dropped = names.filter(l => !v.value.includes(l));
     if (dropped.length) result.rejected.push({ type: key, reason: "filtered by allowlist/blocklist", dropped });
     result.labels.push(...v.value);
   } else if (key === "add_comment") {

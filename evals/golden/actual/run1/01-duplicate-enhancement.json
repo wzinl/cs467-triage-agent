@@ -1,0 +1,211 @@
+{
+  "id": "01-duplicate-enhancement",
+  "replayed_at": "2026-10-24T04:00:13Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11761,
+    "resources": 2266
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop,mcp__safeoutputs__report_incomplete\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/home/claude/work/triage-replay/workspace/.claude/skills/issue-triage/references/comment-format.md\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\", \"new_string\": \"  \\\"decision\\\": \\\"comment\\\",\\n  \\\"labels\\\": [\\\"enhancement\\\"],\\n  \\\"comment\\\": \\\"Thanks for th"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_labels",
+        "input": "{\"labels\": [{\"name\": \"enhancement\", \"rationale\": \"Issue requests a new optional argument; form-based type label missing.\", \"confidence\": \"HIGH\"}], \"item_number\": \"50244\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_comment",
+        "input": "{\"body\": \"Thanks for the report, @naviret. This looks like it may be the same request as https://github.com/hashicorp/terraform-provider-aws/issues/50078 (aws_bedrockagentcore_agent_runtime: Add platform_version argument).\\nIf it is, please add a \\ud83d\\udc4d and any extra details there, so the disc"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 12,
+      "total_cost_usd": 0.13791160000000002,
+      "duration_ms": 16595,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "labels": [
+        {
+          "name": "enhancement",
+          "rationale": "Issue requests a new optional argument; form-based type label missing.",
+          "confidence": "HIGH"
+        }
+      ],
+      "item_number": "50244",
+      "type": "add_labels"
+    },
+    {
+      "body": "Thanks for the report, @naviret. This looks like it may be the same request as https://github.com/hashicorp/terraform-provider-aws/issues/50078 (aws_bedrockagentcore_agent_runtime: Add platform_version argument).\nIf it is, please add a \ud83d\udc4d and any extra details there, so the discussion stays in one place.\nIf it is different, a short note on how it differs will help the maintainers.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+      "item_number": "50244",
+      "type": "add_comment",
+      "temporary_id": "aw_2W12U1a4"
+    }
+  ],
+  "applied": {
+    "labels": [
+      "enhancement"
+    ],
+    "comment": "Thanks for the report, @naviret. This looks like it may be the same request as https://github.com/hashicorp/terraform-provider-aws/issues/50078 (aws_bedrockagentcore_agent_runtime: Add platform_version argument).\nIf it is, please add a \ud83d\udc4d and any extra details there, so the discussion stays in one place.\nIf it is different, a short note on how it differs will help the maintainers.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "comment",
+    "labels": [
+      "enhancement"
+    ],
+    "comment": "Thanks for the report, @naviret. This looks like it may be the same request as https://github.com/hashicorp/terraform-provider-aws/issues/50078 (aws_bedrockagentcore_agent_runtime: Add platform_version argument).\nIf it is, please add a \ud83d\udc4d and any extra details there, so the discussion stays in one place.\nIf it is different, a short note on how it differs will help the maintainers.\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "duplicate_of": [
+      50078
+    ],
+    "reason": "Same platform_version request on the same resource as open issue 50078; enhancement type label missing."
+  },
+  "checks": {
+    "issue": {
+      "number": 50244,
+      "title": "[Enhancement]: Support platform_version on aws_bedrockagentcore_agent_runtime",
+      "author_association": "NONE",
+      "labels_at_open": []
+    },
+    "as_of": "2026-10-01T23:12:23+00:00",
+    "form": {
+      "template": "Request an Enhancement",
+      "missing_required": [],
+      "empty_optional": [],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_bedrockagentcore_agent_runtime",
+          "known": true,
+          "service_label": "service/bedrockagentcore"
+        },
+        {
+          "name": "aws_iam_role",
+          "known": true,
+          "service_label": "service/iam"
+        }
+      ],
+      "regex_labeler_would_apply": [
+        "service/bedrockagentcore"
+      ],
+      "primary_service_label": "service/bedrockagentcore"
+    },
+    "versions": {
+      "terraform": null,
+      "provider": null,
+      "latest_release": "6.67.0",
+      "latest_release_date": "2026-09-30",
+      "provider_status": "not_reported",
+      "newer_release_notes": []
+    },
+    "similar_issues": [
+      {
+        "number": 50078,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/50078",
+        "title": "aws_bedrockagentcore_agent_runtime: Add platform_version argument",
+        "body_excerpt": "Amazon Bedrock AgentCore Runtime now supports a platformVersion field (V1 | V2) on the CreateAgentRuntime, UpdateAgentRuntime, and GetAgentRuntime APIs. V2 starts agents from a prepared snapshot, giving consistent cold starts and usage-based billing. The aws_bedrockagentcore_agent_runtime resource currently has no way to set this, so: - every Terraform-managed agent runtime is created on V1, and -",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2026-09-18T18:22:52Z",
+        "score": 0.593,
+        "band": "likely"
+      },
+      {
+        "number": 47993,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/47993",
+        "title": "aws_bedrockagentcore_agent_runtime - resource policy support",
+        "body_excerpt": "This request add support in adding resource policy in agentcore runtime. aws_bedrockagentcore_agent_runtime hcl No",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2026-05-20T19:32:28Z",
+        "score": 0.381,
+        "band": "possible"
+      },
+      {
+        "number": 44805,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/44805",
+        "title": "`aws_bedrockagentcore_runtime` example has invalid naming convention",
+        "body_excerpt": "hcl resource \"aws_bedrockagentcore_agent_runtime\" \"example\" { agent_runtime_name = \"example-agent-runtime\" role_arn = aws_iam_role.example.arn agent_runtime_artifact { container_configuration { container_uri = \"${aws_ecr_repository.example.repository_url}:latest\" } } network_configuration { network_mode = \"PUBLIC\" } } [agent_runtime_name]( - (Required) Name of the agent runtime. === runtime name s",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-10-25T04:30:44Z",
+        "score": 0.368,
+        "band": "possible"
+      },
+      {
+        "number": 46907,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/46907",
+        "title": "[Bug]: aws_bedrockagentcore_agent_runtime protocol_configuration block not sent to AWS API",
+        "body_excerpt": "1.10.0 6.36.0 * aws_bedrockagentcore_agent_runtime When specifying protocol_configuration { server_protocol = \"MCP\" } in the resource configuration, the ProtocolConfiguration field should be included in the AWS CreateAgentRuntime and UpdateAgentRuntime API requests, and the runtime should be configured with the specified protocol. The protocol_configuration block is accepted by Terraform and appea",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-03-12T22:18:35Z",
+        "score": 0.282,
+        "band": "possible"
+      },
+      {
+        "number": 48428,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/48428",
+        "title": "Bug]: aws_bedrockagentcore_agent_runtime rejects valid JWT authorizer values containing : (colon) that the API, Console, and Cognito all accept",
+        "body_excerpt": "Colon is accepted. terraform plan/apply fails at validation time with a regex/pattern error on the authorizer value as soon as it contains a :. Removing the colon (or using a value without one) lets the configuration validate, but that does not match the tokens our IdP actually issues. The identical value succeeds when the runtime is created in the AWS Console and when the JWT is validated at invo",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-06-16T19:22:21Z",
+        "score": 0.268,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11761,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}

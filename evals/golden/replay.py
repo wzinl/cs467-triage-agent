@@ -20,6 +20,7 @@ default run1). Never calls GitHub.
 
 Usage: python3 evals/golden/replay.py run [case-id ...]      (all cases when none are given)
        python3 evals/golden/replay.py prepare <case-id>     (steps 1-3 plus triage_checks.py; no model call)
+       python3 evals/golden/replay.py reapply [case-id ...]  (recompute `applied` from recorded outputs; no model call)
 Needs: claude (Claude Code CLI) logged in, node, and GH_AW_JS=<gh-aw checkout>/actions/setup/js.
 """
 import gzip
@@ -30,6 +31,7 @@ import shutil
 import subprocess
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 import yaml
@@ -73,13 +75,27 @@ def sparse_paths():
     raise SystemExit("lock file has no sparse checkout")
 
 
-def build_workspace(dest):
+def frozen_changelog(text, as_of):
+    """CHANGELOG.md without the unreleased section and without releases dated after as_of."""
+    keep, out = False, []
+    for line in text.splitlines(keepends=True):
+        if line.startswith("## "):
+            m = re.match(r"^## \d+\.\d+\.\d+ \(([A-Z][a-z]+ \d{1,2}, \d{4})\)", line)
+            keep = bool(m) and datetime.strptime(m.group(1), "%B %d, %Y").strftime("%Y-%m-%d") < as_of[:10]   # same-day releases may postdate the issue
+        if keep:
+            out.append(line)
+    return "".join(out)
+
+
+def build_workspace(dest, as_of=None):
     if dest.exists():
         shutil.rmtree(dest)
     dest.mkdir(parents=True)
     for p in ROOT.iterdir():          # cone-mode sparse checkout always includes root-level files
         if p.is_file():
             shutil.copy2(p, dest / p.name)
+    if as_of:                         # the agent can read CHANGELOG.md directly, so freeze it too
+        (dest / "CHANGELOG.md").write_text(frozen_changelog((ROOT / "CHANGELOG.md").read_text(), as_of))
     for rel in sparse_paths():
         src = ROOT / rel
         if src.is_dir():
@@ -171,12 +187,15 @@ def safeoutputs_setup(case, out_dir):
 
 
 def summarize_stream(log_path):
-    tools, denials, skill_loaded, scripts, result = [], [], False, [], {}
+    tools, denials, skill_loaded, scripts, result, init = [], [], False, [], {}, {}
     for line in log_path.read_text().splitlines():
         try:
             ev = json.loads(line)
         except json.JSONDecodeError:
             continue
+        if ev.get("type") == "system" and ev.get("subtype") == "init":   # what actually served the run, for drift checks
+            init = {"model_served": ev.get("model"), "cli_version": ev.get("claude_code_version"),
+                    "permission_mode": ev.get("permissionMode")}
         if ev.get("type") == "assistant":
             for b in ev["message"].get("content", []):
                 if b.get("type") == "tool_use":
@@ -189,8 +208,32 @@ def summarize_stream(log_path):
         if ev.get("type") == "result":
             result = {k: ev.get(k) for k in ("subtype", "num_turns", "total_cost_usd", "duration_ms", "is_error")}
             denials = ev.get("permission_denials", [])
-    return {"skill_loaded": skill_loaded, "bash_commands": scripts, "tool_calls": tools,
+    return {**init, "skill_loaded": skill_loaded, "bash_commands": scripts, "tool_calls": tools,
             "permission_denials": denials, "result": result}
+
+
+def apply_outputs(outputs, cfg, author):
+    allowed_domains = step_env("Ingest agent output").get("GH_AW_ALLOWED_DOMAINS", "")
+    applied = subprocess.run(["node", str(HERE / "apply_safe_outputs.cjs"), str(outputs), str(cfg), author],
+                             env={**os.environ, "GH_AW_JS": str(GH_AW_JS), "GH_AW_ALLOWED_DOMAINS": allowed_domains},
+                             check=True, capture_output=True, text=True).stdout
+    return json.loads(applied)
+
+
+def reapply(cid):
+    """Recompute `applied` from the recorded raw outputs, without calling the model."""
+    path = ACTUAL / f"{cid}.json"
+    actual = json.loads(path.read_text())
+    if actual.get("skipped"):
+        return
+    case = json.loads((HERE / "cases" / cid / "input.json").read_text())
+    tmp = WORK / "reapply"
+    cfg, _, _ = safeoutputs_setup(case, tmp)
+    outputs = tmp / "outputs.jsonl"
+    outputs.write_text("".join(json.dumps(o) + "\n" for o in actual["raw_outputs"]))
+    actual["applied"] = apply_outputs(outputs, cfg, case["event"]["issue"]["user"]["login"])
+    actual["trace"] = summarize_stream(LOGS / f"{cid}.stream.jsonl")
+    path.write_text(json.dumps(actual, indent=2) + "\n")
 
 
 def run_case(cid, flags):
@@ -202,7 +245,7 @@ def run_case(cid, flags):
         (ACTUAL / f"{cid}.json").write_text(json.dumps(actual, indent=2) + "\n")
         return actual
     ws = WORK / "workspace"
-    build_workspace(ws)
+    build_workspace(ws, case["as_of"])
     actual["context"] = prepare(case, ws)
     cfg, outputs, mcp = safeoutputs_setup(case, WORK / "safeoutputs")
     home = WORK / "home"
@@ -228,11 +271,7 @@ def run_case(cid, flags):
             actual["exit_code"] = "timeout"
     actual["trace"] = summarize_stream(log_path)
     actual["raw_outputs"] = [json.loads(l) for l in outputs.read_text().splitlines()] if outputs.exists() else []
-    allowed_domains = step_env("Ingest agent output").get("GH_AW_ALLOWED_DOMAINS", "")
-    applied = subprocess.run(["node", str(HERE / "apply_safe_outputs.cjs"), str(outputs), str(cfg), issue["user"]["login"]],
-                             env={**os.environ, "GH_AW_JS": str(GH_AW_JS), "GH_AW_ALLOWED_DOMAINS": allowed_domains},
-                             check=True, capture_output=True, text=True).stdout
-    actual["applied"] = json.loads(applied)
+    actual["applied"] = apply_outputs(outputs, cfg, issue["user"]["login"])
     for name in ("plan.json", "checks.json"):
         p = AGENT_DIR / name
         if p.exists():
@@ -242,7 +281,7 @@ def run_case(cid, flags):
 
 
 def main():
-    if len(sys.argv) < 2 or sys.argv[1] not in ("run", "prepare"):
+    if len(sys.argv) < 2 or sys.argv[1] not in ("run", "prepare", "reapply"):
         raise SystemExit(__doc__)
     WORK.mkdir(parents=True, exist_ok=True)
     ACTUAL.mkdir(parents=True, exist_ok=True)
@@ -250,9 +289,13 @@ def main():
     if sys.argv[1] == "prepare":
         case = json.loads((HERE / "cases" / sys.argv[2] / "input.json").read_text())
         ws = WORK / "workspace"
-        build_workspace(ws)
+        build_workspace(ws, case["as_of"])
         print(prepare(case, ws))
         subprocess.run([sys.executable, ".claude/skills/issue-triage/scripts/triage_checks.py"], cwd=ws, check=True)
+        return
+    if sys.argv[1] == "reapply":
+        for cid in sys.argv[2:] or sorted(p.stem for p in ACTUAL.glob("*.json")):
+            reapply(cid)
         return
     flags = claude_flags()
     ids = sys.argv[2:] or sorted(p.name for p in (HERE / "cases").iterdir())
