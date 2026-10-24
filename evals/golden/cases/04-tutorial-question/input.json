@@ -1,0 +1,25 @@
+{
+  "id": "04-tutorial-question",
+  "source": "https://github.com/hashicorp/terraform-provider-aws/issues/49889",
+  "kind": "real",
+  "as_of": "2026-09-08T08:59:11Z",
+  "event": {
+    "action": "opened",
+    "issue": {
+      "number": 49889,
+      "title": "Error when doing Terraform tutorial",
+      "body": "### Terraform and AWS Provider Version\n\n```console\n1.16.0 on windows_amd64\n```\n\n### Affected Resource(s) or Data Source(s)\n\nI am new to Terraform, working my way through the tutorials.\nWhile doing \"Assign values with a file\" on this page: https://developer.hashicorp.com/terraform/tutorials/cli/variables\nI received the following messages.   I have no idea what it means, hope someone does :-)\n<img width=\"702\" height=\"640\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/d2aa0a0c-5f37-4714-b6dd-4e92afd4731e\" />\n\n### Expected Behavior\n\nNo errors\n\n### Actual Behavior\n\nhttps://developer.hashicorp.com/terraform/tutorials/cli/variables\n\n### Relevant Error/Panic Output\n\n```console\n\n```\n\n\n### Sample Terraform Configuration\n\n<details open>\n<summary>Click to expand configuration</summary>\n\n```hcl\nSee https://developer.hashicorp.com/terraform/tutorials/cli/variables\n```\n</details>\n\n\n### Steps to Reproduce\n\nThe steps on https://developer.hashicorp.com/terraform/tutorials/cli/variables\nI was doing the apply at  \"Assign values with a file\"\n\n### Debug Logging\n\n<details open>\n<summary>Click to expand log output</summary>\n\n```console\n\n```\n</details>\n\n\n### GenAI / LLM Assisted Development\n\nn/a\n\n### Important Facts and References\n\n_No response_\n\n### Would you like to implement a fix?\n\nNo",
+      "user": {
+        "login": "Splinkle"
+      },
+      "author_association": "NONE",
+      "labels": [
+        {
+          "name": "bug"
+        }
+      ],
+      "created_at": "2026-09-08T08:59:11Z"
+    }
+  },
+  "corpus_extra": []
+}

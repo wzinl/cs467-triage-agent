@@ -241,6 +241,10 @@ variable "workflow_labels" {
       color       = "7345b6", # color:terraform (main)
       description = "Pertains to timeout increases."
     },
+    "triage-agent-paused" = {
+      color       = "e05959", # color:boundary
+      description = "Kill switch: while any issue carries this label, the issue-triage agent does not run."
+    },
     "upstream" = {
       color       = "3266e9", # color:vagrant
       description = "Addresses functionality related to the cloud provider."

@@ -1,0 +1,7 @@
+# Changes to the agent's configuration, instructions or evaluation need the owner's review.
+/.github/workflows/  @wzinl
+/.claude/            @wzinl
+/AGENTS.md           @wzinl
+/CONTRIBUTING.md     @wzinl
+/evals/              @wzinl
+/infrastructure/repository/  @wzinl
