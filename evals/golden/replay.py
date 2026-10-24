@@ -220,9 +220,12 @@ def run_case(cid, flags):
            "--mcp-config", str(mcp)]
     log_path = LOGS / f"{cid}.stream.jsonl"
     with open(log_path, "w") as log:
-        proc = subprocess.run(cmd, input=build_prompt(issue["number"]), cwd=ws, env=env, stdout=log,
-                              stderr=subprocess.PIPE, text=True, timeout=20 * 60)
-    actual["exit_code"] = proc.returncode
+        try:  # the workflow's agent job timeout is 20 minutes
+            proc = subprocess.run(cmd, input=build_prompt(issue["number"]), cwd=ws, env=env, stdout=log,
+                                  stderr=subprocess.PIPE, text=True, timeout=20 * 60)
+            actual["exit_code"] = proc.returncode
+        except subprocess.TimeoutExpired:
+            actual["exit_code"] = "timeout"
     actual["trace"] = summarize_stream(log_path)
     actual["raw_outputs"] = [json.loads(l) for l in outputs.read_text().splitlines()] if outputs.exists() else []
     allowed_domains = step_env("Ingest agent output").get("GH_AW_ALLOWED_DOMAINS", "")
