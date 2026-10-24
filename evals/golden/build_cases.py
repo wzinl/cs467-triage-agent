@@ -36,6 +36,9 @@ REAL = [
     ("13-older-major-version", 49310),
     ("14-complete-enhancement-no-action", 50112),
     ("15-duplicate-of-case-06", 50097),
+    # Added after run1, held out from the skill changes it prompted (expected.json committed before run2).
+    ("19-fix-released-day-before", 48241),
+    ("20-release-later-same-day", 49448),
 ]
 
 
