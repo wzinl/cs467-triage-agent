@@ -1,0 +1,188 @@
+{
+  "id": "08-complete-bug-no-action",
+  "replayed_at": "2026-10-24T04:14:00Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11722,
+    "resources": 2263
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\", \"new_string\": \"  \\\"decision\\\": \\\"noop\\\",\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n "
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__noop",
+        "input": "{\"message\": \"Complete bug report; bug and service/elbv2 already applied, no likely duplicate, no comment trigger.\"}"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 10,
+      "total_cost_usd": 0.13207799999999997,
+      "duration_ms": 15121,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "message": "Complete bug report; bug and service/elbv2 already applied, no likely duplicate, no comment trigger.",
+      "type": "noop"
+    }
+  ],
+  "applied": {
+    "labels": [],
+    "comment": null,
+    "noop": "Complete bug report; bug and service/elbv2 already applied, no likely duplicate, no comment trigger.",
+    "rejected": []
+  },
+  "plan": {
+    "decision": "noop",
+    "labels": [],
+    "comment": null,
+    "duplicate_of": [],
+    "reason": "Complete bug report; bug and service/elbv2 already applied, no likely duplicate, no comment trigger."
+  },
+  "checks": {
+    "issue": {
+      "number": 50100,
+      "title": "[Bug]: aws_lb_listener silently ignores tcp_idle_timeout_seconds on TCP_UDP listeners",
+      "author_association": "NONE",
+      "labels_at_open": [
+        "bug"
+      ]
+    },
+    "as_of": "2026-09-21T17:22:08+00:00",
+    "form": {
+      "template": "Report a Bug",
+      "missing_required": [],
+      "empty_optional": [],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_lb_listener",
+          "known": true,
+          "service_label": "service/elbv2"
+        },
+        {
+          "name": "aws_lb_target_group",
+          "known": true,
+          "service_label": "service/elbv2"
+        }
+      ],
+      "regex_labeler_would_apply": [
+        "bug",
+        "service/elbv2"
+      ],
+      "primary_service_label": "service/elbv2"
+    },
+    "versions": {
+      "terraform": "1.15.2",
+      "provider": null,
+      "latest_release": "6.65.0",
+      "latest_release_date": "2026-09-16",
+      "provider_status": "not_reported",
+      "newer_release_notes": [],
+      "newer_fixes": []
+    },
+    "similar_issues": [
+      {
+        "number": 39316,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/39316",
+        "title": "[Docs]: Conflicting aws_lb_listener protocol documentation for NLBs",
+        "body_excerpt": "I see these two pieces of information on the aws_lb_listener page: * For Network Load Balancers, valid values are TCP, TLS, UDP, and TCP_UDP. * Please note that listeners that are attached to Application Load Balancers must use either HTTP or HTTPS protocols while listeners that are attached to Network Load Balancers must use the TCP protocol. Which of these is correct? AWS seems to say that all t",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2024-09-13T14:56:21Z",
+        "score": 0.289,
+        "band": "possible"
+      },
+      {
+        "number": 39986,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/39986",
+        "title": "[Enhancement]: Add TCP Idle Timeout to AWS Network Firewall",
+        "body_excerpt": "AWS Network Firewall now supports configurable TCP idle timeouts See Blog - aws_networkfirewall_firewall_policy terraform resource \u201caws_networkfirewall_firewall_policy\" \"example\" { tcp_idle_timeout_seconds = \"350\" } [1] [2] No",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2024-11-01T17:38:01Z",
+        "score": 0.244,
+        "band": "weak"
+      },
+      {
+        "number": 40417,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/40417",
+        "title": "[Bug]: Want to make a NLB with two TCP listeners, but instead am getting one listener where the port keeps flipping",
+        "body_excerpt": "1.5.5 5.78.0 aws_lb_listener I would have liked to have two TCP listeners for my NLB, one for port 443, one for port 80. Terraform creates one listener. On each subsequent run, it flips the actual port configured to the other port in listed in my Terraform. resource \"aws_lb\" \"zipkin_nlb\" { name = \"zipkin-nlb\" load_balancer_type = \"network\" subnets = \"subnet-xxxxxxxxxxx\" security_groups = [\"sg-xxxx",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2024-12-03T20:35:22Z",
+        "score": 0.223,
+        "band": "weak"
+      },
+      {
+        "number": 23107,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/23107",
+        "title": "Load balancer listener ",
+        "body_excerpt": "* Please vote on this issue by adding a \ud83d\udc4d [reaction]( to the original issue to help the community and maintainers prioritize this request * Pl",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2022-02-10T21:02:52Z",
+        "score": 0.22,
+        "band": "weak"
+      },
+      {
+        "number": 35121,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/35121",
+        "title": "[Bug]: Implicit import of aws_lb_listener instead of error \"A listener already exists on this port for this load balancer\"",
+        "body_excerpt": "1.6.6 5.3.1 * aws_lb_listener I expect the error > A listener already exists on this port for this load balancer ... To be raised No error is raised and the ARN output is the same. Previously added rules are lost silently. terraform terraform { required_providers { aws = { source = \"hashicorp/aws\" version = \"~> 5.31\" } } } provider \"aws\" { # Configuration options region = \"eu-west-1\" } resource \"a",
+        "state": "closed",
+        "state_reason": "not_planned",
+        "created_at": "2024-01-03T15:24:42Z",
+        "score": 0.209,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11722,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}

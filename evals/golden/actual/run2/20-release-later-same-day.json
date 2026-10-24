@@ -1,0 +1,219 @@
+{
+  "id": "20-release-later-same-day",
+  "replayed_at": "2026-10-24T04:17:26Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11536,
+    "resources": 2245
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "cat .claude/skills/issue-triage/references/comment-format.md; cat /tmp/gh-aw/agent/plan.json",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\", \"description\": \"Run triage checks\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"cat .claude/skills/issue-triage/references/comment-format.md; cat /tmp/gh-aw/agent/plan.json\", \"description\": \"Read comment format and plan\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"{\\n  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\\n}\", \"new_string\": \"{\\n  \\\"decision\\\": \\\"comment\\\",\\n  \\\"labels\\\": [\\\"regression\\\", \\\"waiting-response\\\"],\\n"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\", \"description\": \"Validate triage plan\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_labels",
+        "input": "{\"labels\": [{\"name\": \"regression\", \"rationale\": \"Reporter says the same configuration works on v6.58.0 and fails on v6.59.0.\", \"confidence\": \"HIGH\"}, {\"name\": \"waiting-response\", \"rationale\": \"Required Sample Terraform Configuration field is empty; comment asks for it.\", \"confidence\": \"HIGH\"}], \"ite"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_comment",
+        "input": "{\"body\": \"Thanks for the report, @YanyChoi. To reproduce this, the maintainers will need:\\n\\n- The \\\"Sample Terraform Configuration\\\" section, which is empty. A minimal `aws_network_acl_rule` configuration (and how the module builds it, if relevant) would help.\\n\\nCould you add this to the issue des"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 11,
+      "total_cost_usd": 0.14289729999999998,
+      "duration_ms": 17501,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "labels": [
+        {
+          "name": "regression",
+          "rationale": "Reporter says the same configuration works on v6.58.0 and fails on v6.59.0.",
+          "confidence": "HIGH"
+        },
+        {
+          "name": "waiting-response",
+          "rationale": "Required Sample Terraform Configuration field is empty; comment asks for it.",
+          "confidence": "HIGH"
+        }
+      ],
+      "item_number": "49448",
+      "type": "add_labels"
+    },
+    {
+      "body": "Thanks for the report, @YanyChoi. To reproduce this, the maintainers will need:\n\n- The \"Sample Terraform Configuration\" section, which is empty. A minimal `aws_network_acl_rule` configuration (and how the module builds it, if relevant) would help.\n\nCould you add this to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+      "item_number": "49448",
+      "type": "add_comment",
+      "temporary_id": "aw_QLZhzWPh"
+    }
+  ],
+  "applied": {
+    "labels": [
+      "regression",
+      "waiting-response"
+    ],
+    "comment": "Thanks for the report, @YanyChoi. To reproduce this, the maintainers will need:\n\n- The \"Sample Terraform Configuration\" section, which is empty. A minimal `aws_network_acl_rule` configuration (and how the module builds it, if relevant) would help.\n\nCould you add this to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "comment",
+    "labels": [
+      "regression",
+      "waiting-response"
+    ],
+    "comment": "Thanks for the report, @YanyChoi. To reproduce this, the maintainers will need:\n\n- The \"Sample Terraform Configuration\" section, which is empty. A minimal `aws_network_acl_rule` configuration (and how the module builds it, if relevant) would help.\n\nCould you add this to the issue description?\n\n_Automated first-pass triage. A maintainer will review this issue and make every decision on it._",
+    "duplicate_of": [],
+    "reason": "Bug report with empty required configuration field; reporter names v6.58.0 as working version (regression)."
+  },
+  "checks": {
+    "issue": {
+      "number": 49448,
+      "title": "[Bug]: aws_network_acl_rule \"Missing Resource Identity After Read\" on every plan after upgrading to 6.59.0",
+      "author_association": "NONE",
+      "labels_at_open": [
+        "bug"
+      ]
+    },
+    "as_of": "2026-08-13T02:42:16+00:00",
+    "form": {
+      "template": "Report a Bug",
+      "missing_required": [
+        "Sample Terraform Configuration"
+      ],
+      "empty_optional": [
+        "Relevant Error/Panic Output",
+        "Debug Logging",
+        "Important Facts and References"
+      ],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_network_acl_rule",
+          "known": true,
+          "service_label": "service/vpc"
+        }
+      ],
+      "regex_labeler_would_apply": [
+        "bug",
+        "service/vpc"
+      ],
+      "primary_service_label": "service/vpc"
+    },
+    "versions": {
+      "terraform": "1.7.5",
+      "provider": "6.59.0",
+      "latest_release": "6.59.0",
+      "latest_release_date": "2026-08-12",
+      "provider_status": "current",
+      "minor_releases_behind": 0,
+      "newer_release_notes": [],
+      "newer_fixes": []
+    },
+    "similar_issues": [
+      {
+        "number": 48579,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/48579",
+        "title": "List: aws_network_acl_rule",
+        "body_excerpt": "Implementation of both list and resource identity schemas for the aws_network_acl_rule resource. Relates #47005",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2026-06-25T17:27:13Z",
+        "score": 0.426,
+        "band": "likely"
+      },
+      {
+        "number": 30769,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/30769",
+        "title": "[Bug]: Error: reading EC2 Network ACL Rule (nacl-xxxxxx): empty result",
+        "body_excerpt": "v0.12.31 ~> 4.63 nacl-xxxxxxx terraform apply should create nacl rules with out failing to read nacl without terraform apply failed to create nacl rules shell **Error: reading EC2 Network ACL Rule (nacl-xxxxxx): empty result on nacl.tf line 9, in resource \"aws_network_acl_rule\" \"ingress02\": 9: resource \"aws_network_acl_rule\" \"ingress02\"{** Terrafrom V0.12.31 AWS Version: ~> 4.63 terraform apply No",
+        "state": "closed",
+        "state_reason": "not_planned",
+        "created_at": "2023-04-17T07:11:40Z",
+        "score": 0.372,
+        "band": "possible"
+      },
+      {
+        "number": 44376,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/44376",
+        "title": "Provider returns 'Missing Resource Identity After Update' error for AWS resources on update",
+        "body_excerpt": "ALL The provider should update AWS resources successfully and return a valid resource identity after the update, without producing errors. When an update operation is performed, it should complete without reporting Missing Resource Identity After Update An error is returned: Error: Missing Resource Identity After Update: The Terraform provider unexpectedly returned no resource identity after havin",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-09-19T15:37:05Z",
+        "score": 0.341,
+        "band": "possible"
+      },
+      {
+        "number": 44366,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/44366",
+        "title": "Provider 6.14.0 apply failing with \"Missing Resource Identity After Update\" ",
+        "body_excerpt": "Observed on aws_s3_object, but other resources could also be affected by this (seeing the report for Lambda in #44361) Provider should return cleanly after applying changes to aws_s3_object like it does with provider 6.13.0. The S3 object is uploaded, but the apply fail with the error: aws_s3_object.test: Modifying... [id=test] \u2577 \u2502 Error: Missing Resource Identity After Update: The Terraform provi",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-09-19T07:09:48Z",
+        "score": 0.277,
+        "band": "weak"
+      },
+      {
+        "number": 47755,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/47755",
+        "title": "[Bug]: aws_s3_directory_bucket \u2014 Missing Resource Identity After Read",
+        "body_excerpt": "* aws_s3_directory_bucket terraform apply of a fresh aws_s3_directory_bucket resource should create the bucket and complete without error. Refresh of an existing one should populate state and identity cleanly. Both Create-then-Read and refresh against an existing directory bucket fail with: Error: Missing Resource Identity After Read The Terraform Provider unexpectedly returned no resource identit",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2026-05-04T20:58:51Z",
+        "score": 0.274,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11536,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}

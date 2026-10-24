@@ -1,0 +1,201 @@
+{
+  "id": "14-complete-enhancement-no-action",
+  "replayed_at": "2026-10-24T04:15:33Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11729,
+    "resources": 2263
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/home/claude/work/triage-replay/workspace/.claude/skills/issue-triage/references/comment-format.md\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\", \"new_string\": \"  \\\"decision\\\": \\\"noop\\\",\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n "
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__noop",
+        "input": "{\"message\": \"Complete enhancement request; enhancement label already set, service/imagebuilder added by the regex labeler, no duplicate among weak candidates.\"}"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 11,
+      "total_cost_usd": 0.1313443,
+      "duration_ms": 13114,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "message": "Complete enhancement request; enhancement label already set, service/imagebuilder added by the regex labeler, no duplicate among weak candidates.",
+      "type": "noop"
+    }
+  ],
+  "applied": {
+    "labels": [],
+    "comment": null,
+    "noop": "Complete enhancement request; enhancement label already set, service/imagebuilder added by the regex labeler, no duplicate among weak candidates.",
+    "rejected": []
+  },
+  "plan": {
+    "decision": "noop",
+    "labels": [],
+    "comment": null,
+    "duplicate_of": [],
+    "reason": "Complete enhancement request; enhancement label already set, service/imagebuilder added by the regex labeler, no duplicate among weak candidates."
+  },
+  "checks": {
+    "issue": {
+      "number": 50112,
+      "title": "`aws_imagebuilder_image_pipeline` missing `imageTags` property",
+      "author_association": "NONE",
+      "labels_at_open": [
+        "enhancement"
+      ]
+    },
+    "as_of": "2026-09-22T15:28:17+00:00",
+    "form": {
+      "template": "Request an Enhancement",
+      "missing_required": [],
+      "empty_optional": [],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_imagebuilder_image_pipeline",
+          "known": true,
+          "service_label": "service/imagebuilder"
+        },
+        {
+          "name": "aws_imagebuilder_distribution_configuration",
+          "known": true,
+          "service_label": "service/imagebuilder"
+        },
+        {
+          "name": "aws_imagebuilder_image_recipe",
+          "known": true,
+          "service_label": "service/imagebuilder"
+        },
+        {
+          "name": "aws_imagebuilder_infrastructure_configuration",
+          "known": true,
+          "service_label": "service/imagebuilder"
+        }
+      ],
+      "regex_labeler_would_apply": [
+        "service/imagebuilder"
+      ],
+      "primary_service_label": "service/imagebuilder"
+    },
+    "versions": {
+      "terraform": null,
+      "provider": null,
+      "latest_release": "6.66.0",
+      "latest_release_date": "2026-09-21",
+      "provider_status": "not_reported",
+      "newer_release_notes": [],
+      "newer_fixes": []
+    },
+    "similar_issues": [
+      {
+        "number": 46044,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/46044",
+        "title": "[Docs]: ImageBuilder Recipe Attribute Reference missing `id`",
+        "body_excerpt": "The id Attribute is not documented in any of the following resource types - aws_imagebuilder_component - aws_imagebuilder_container_recipe - aws_imagebuilder_distribution_configuration - aws_imagebuilder_image - aws_imagebuilder_image_pipeline - aws_imagebuilder_image_recipe - ~aws_imagebuilder_infrastructure_configuration~ - ~aws_imagebuilder_lifecycle_policy~ - aws_imagebuilder_workflow No",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-01-20T05:23:10Z",
+        "score": 0.235,
+        "band": "weak"
+      },
+      {
+        "number": 33213,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/33213",
+        "title": "[Enhancement]: aws_imagebuilder_image",
+        "body_excerpt": "Enhancement to existing resource aws_imagebuilder_image Would like to have an option to enable image scanning argument ref. boto3 and aws cli api currently supports the arguments config. aws_imagebuilder_image terraform resource \"aws_imagebuilder_image\" \"example\" { distribution_configuration_arn = aws_imagebuilder_distribution_configuration.example.arn image_recipe_arn = aws_imagebuilder_image_rec",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2023-08-29T02:37:55Z",
+        "score": 0.224,
+        "band": "weak"
+      },
+      {
+        "number": 40128,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/40128",
+        "title": "[Bug]: aws_imagebuilder_image_recipe cannot be deleted due to resource dependency",
+        "body_excerpt": "1.9.8 5.74.0, 5.75.1 aws_imagebuilder_image_pipeline aws_imagebuilder_image_recipe aws_imagebuilder_component When updating the data property of an aws_imagebuilder_component resource, any associated aws_imagebuilder_image_recipe needs to be replaced, and then any associated aws_imagebuilder_image_pipeline should also be replaced. This is how things behaved up until 5.74.0 Terraform attempts to de",
+        "state": "closed",
+        "state_reason": "not_planned",
+        "created_at": "2024-11-14T11:58:40Z",
+        "score": 0.206,
+        "band": "weak"
+      },
+      {
+        "number": 31597,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/31597",
+        "title": "[Enhancement]: Add support for Image Scanning Configuration to aws_imagebuilder_image_pipeline resource",
+        "body_excerpt": "Currently there is no support for image scanning configuration in the aws_imagebuilder_image_pipeline resource. This means there is no way to enable image scanning in the imagebuilder pipeline without resorting to something outside of the terraform Resource. I would like to be able to enable this on any deployed EC2 ImageBuilder pipeline from the Terraform resource. The AWS CLI already has support",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2023-05-26T09:13:01Z",
+        "score": 0.202,
+        "band": "weak"
+      },
+      {
+        "number": 45748,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/45748",
+        "title": "Add logging_configuration support for EC2 Image Builder resources",
+        "body_excerpt": "EC2 Image Builder supports logging configuration for both Image and Image Pipeline resources to capture build and execution logs in custom CloudWatch Log Groups. This feature allows users to specify custom log destinations for better log organization and management. Currently, the Terraform AWS provider does not support the loggingConfiguration parameter available in the Image Builder API, creatin",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-12-28T22:39:51Z",
+        "score": 0.2,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11729,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}

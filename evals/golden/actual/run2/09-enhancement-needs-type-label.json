@@ -1,0 +1,195 @@
+{
+  "id": "09-enhancement-needs-type-label",
+  "replayed_at": "2026-10-24T04:14:17Z",
+  "model": "claude-sonnet-5-5",
+  "context": {
+    "corpus": 11718,
+    "resources": 2263
+  },
+  "exit_code": 0,
+  "trace": {
+    "model_served": "claude-sonnet-5-5",
+    "cli_version": "2.1.310",
+    "permission_mode": "dontAsk",
+    "skill_loaded": true,
+    "bash_commands": [
+      "python3 .claude/skills/issue-triage/scripts/triage_checks.py",
+      "python3 .claude/skills/issue-triage/scripts/validate_plan.py"
+    ],
+    "tool_calls": [
+      {
+        "tool": "Skill",
+        "input": "{\"skill\": \"issue-triage\"}"
+      },
+      {
+        "tool": "ToolSearch",
+        "input": "{\"query\": \"select:mcp__safeoutputs__add_comment,mcp__safeoutputs__add_labels,mcp__safeoutputs__noop\", \"max_results\": 5}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/issue.json\"}"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/triage_checks.py\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/home/claude/work/triage-replay/workspace/.claude/skills/issue-triage/references/comment-format.md\"}"
+      },
+      {
+        "tool": "Read",
+        "input": "{\"file_path\": \"/tmp/gh-aw/agent/plan.json\"}"
+      },
+      {
+        "tool": "Edit",
+        "input": "{\"replace_all\": false, \"file_path\": \"/tmp/gh-aw/agent/plan.json\", \"old_string\": \"  \\\"decision\\\": null,\\n  \\\"labels\\\": [],\\n  \\\"comment\\\": null,\\n  \\\"duplicate_of\\\": [],\\n  \\\"reason\\\": null\", \"new_string\": \"  \\\"decision\\\": \\\"labels\\\",\\n  \\\"labels\\\": [\\\"enhancement\\\"],\\n  \\\"comment\\\": null,\\n  \\\"dupli"
+      },
+      {
+        "tool": "Bash",
+        "input": "{\"command\": \"python3 .claude/skills/issue-triage/scripts/validate_plan.py\"}"
+      },
+      {
+        "tool": "mcp__safeoutputs__add_labels",
+        "input": "{\"item_number\": \"50093\", \"labels\": [{\"name\": \"enhancement\", \"rationale\": \"Complete enhancement request for a new aws_ecs_service argument; no type label present.\", \"confidence\": \"HIGH\"}]}"
+      }
+    ],
+    "permission_denials": [],
+    "result": {
+      "subtype": "success",
+      "num_turns": 11,
+      "total_cost_usd": 0.1330008,
+      "duration_ms": 13746,
+      "is_error": false
+    }
+  },
+  "raw_outputs": [
+    {
+      "item_number": "50093",
+      "labels": [
+        {
+          "name": "enhancement",
+          "rationale": "Complete enhancement request for a new aws_ecs_service argument; no type label present.",
+          "confidence": "HIGH"
+        }
+      ],
+      "type": "add_labels"
+    }
+  ],
+  "applied": {
+    "labels": [
+      "enhancement"
+    ],
+    "comment": null,
+    "noop": null,
+    "rejected": []
+  },
+  "plan": {
+    "decision": "labels",
+    "labels": [
+      "enhancement"
+    ],
+    "comment": null,
+    "duplicate_of": [],
+    "reason": "Complete enhancement request for an existing resource; no duplicate (all candidates weak); service/ecs is added by the regex labeler."
+  },
+  "checks": {
+    "issue": {
+      "number": 50093,
+      "title": "[Enhancement]: aws_ecs_service: support deployment_configuration.early_success_criteria",
+      "author_association": "NONE",
+      "labels_at_open": []
+    },
+    "as_of": "2026-09-21T08:53:55+00:00",
+    "form": {
+      "template": "Request an Enhancement",
+      "missing_required": [],
+      "empty_optional": [],
+      "used_form": true
+    },
+    "services": {
+      "resources_mentioned": [
+        {
+          "name": "aws_ecs_service",
+          "known": true,
+          "service_label": "service/ecs"
+        }
+      ],
+      "regex_labeler_would_apply": [
+        "service/ecs"
+      ],
+      "primary_service_label": "service/ecs"
+    },
+    "versions": {
+      "terraform": null,
+      "provider": null,
+      "latest_release": "6.65.0",
+      "latest_release_date": "2026-09-16",
+      "provider_status": "not_reported",
+      "newer_release_notes": [],
+      "newer_fixes": []
+    },
+    "similar_issues": [
+      {
+        "number": 43431,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/43431",
+        "title": "r/aws_ecs_service: Support deployment configuration strategy",
+        "body_excerpt": "AWS has recently added support for blue green deployments using ECS as deployment controller. This is also the new recommended way to do blue green deployments. > Amazon ECS enables built-in blue/green deployments * [Announcement]( * [Blog post]( Request: Add support for deployment_configuration where you may configure strategy which can have value: ROLLING or blue_green. Example from AWS docs: \"d",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-07-17T13:12:08Z",
+        "score": 0.275,
+        "band": "weak"
+      },
+      {
+        "number": 44883,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/44883",
+        "title": "ECS - Linear and Canary deployments",
+        "body_excerpt": "Amazon ECS now supports built-in Linear and Canary deployments [link]( This will be a new addition to the deployment_configuration. * aws_ecs_service hcl resource \"aws_ecs_service\" \"example\" { name = \"example\" cluster = aws_ecs_cluster.example.id # ... other configurations ... deployment_configuration { strategy = \"CANARY\" bake_time_in_minutes = 15 canary_configuration { canary_percent = 10.0 cana",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2025-10-30T21:25:09Z",
+        "score": 0.262,
+        "band": "weak"
+      },
+      {
+        "number": 48075,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/48075",
+        "title": "Add target_type and timeout_configuration to lifecycle_hook in aws_ecs_service (pause hook support)",
+        "body_excerpt": "The ECS API now supports PAUSE lifecycle hooks (announced May 19, 2026), but the lifecycle_hook block in aws_ecs_service only exposes Lambda hook fields. The target_type and timeout_configuration attributes are missing, making it impossible to configure pause hooks via Terraform. - aws_ecs_service hcl resource \"aws_ecs_service\" \"example\" { # ... deployment_configuration { strategy = \"CANARY\" canar",
+        "state": "closed",
+        "state_reason": "completed",
+        "created_at": "2026-05-27T04:25:23Z",
+        "score": 0.183,
+        "band": "weak"
+      },
+      {
+        "number": 32265,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/32265",
+        "title": "[Enhancement]: Add support for setting the deploymentConfiguration field on aws_ecs_service resources",
+        "body_excerpt": "This is a relatively new feature documented in this [blog]( post, which allows ECS to automatically rollback deployments in case of failures: Here's how the new parameter looks like in JSON, as per the above blog: \"deploymentConfiguration\":{ \"deploymentCircuitBreaker\":{ \"enable\":true, \"rollback\":true }, \"maximumPercent\":200, \"minimumHealthyPercent\":50, \"alarms\":{ \"alarmNames\":[ \"HighResponseLatenc",
+        "state": "closed",
+        "state_reason": "not_planned",
+        "created_at": "2023-06-28T18:34:11Z",
+        "score": 0.174,
+        "band": "weak"
+      },
+      {
+        "number": 45678,
+        "url": "https://github.com/hashicorp/terraform-provider-aws/issues/45678",
+        "title": "aws_ecs_service: Terraform triggered deployments do not alternate target groups for ECS-managed blue/green",
+        "body_excerpt": "aws_ecs_service When using ECS-managed blue/green deployments (deployment_controller = \"ECS\" with blue_green_deployment enabled), Terraform-managed updates to an aws_ecs_service should behave the same as deployments triggered manually via the AWS console. ECS should be able to: - Correctly determine the active and inactive target groups - Register new tasks to the inactive target group during a de",
+        "state": "open",
+        "state_reason": null,
+        "created_at": "2025-12-21T13:09:35Z",
+        "score": 0.17,
+        "band": "weak"
+      }
+    ],
+    "corpus_size": 11718,
+    "thresholds": {
+      "likely": 0.4,
+      "possible": 0.28
+    }
+  }
+}
