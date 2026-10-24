@@ -281,7 +281,8 @@ def similar_issues(issue, corpus):
     scored.sort(key=lambda x: -x[0])
     out = []
     for s, c in scored[:TOP_K]:
-        out.append({"number": c["number"], "url": c.get("url"), "title": c.get("title"),
+        excerpt = re.sub(r"\s+", " ", clean_body(c.get("body")).replace("`", "")).strip()[:400]
+        out.append({"number": c["number"], "url": c.get("url"), "title": c.get("title"), "body_excerpt": excerpt,
                     "state": c.get("state"), "state_reason": c.get("state_reason"),
                     "created_at": c.get("created_at"), "score": round(s, 3),
                     "band": "likely" if s >= DUP_LIKELY else "possible" if s >= DUP_POSSIBLE else "weak"})

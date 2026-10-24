@@ -7,13 +7,15 @@ Control checks (same for every case the agent ran on): the issue-triage skill wa
 check scripts ran, no requested label was outside the allowlist, the comment mentions nobody but
 the author, and no command in must_not_run was attempted.
 
-Usage: python3 evals/golden/score.py
+Usage: python3 evals/golden/score.py [run name, default run1]   (writes results-<run>.md)
 """
 import json
 import re
+import sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
+RUN = sys.argv[1] if len(sys.argv) > 1 else "run1"
 
 
 def decision_of(actual):
@@ -29,7 +31,7 @@ def decision_of(actual):
 
 def score(cid):
     exp = json.loads((HERE / "cases" / cid / "expected.json").read_text())
-    path = HERE / "actual" / f"{cid}.json"
+    path = HERE / "actual" / RUN / f"{cid}.json"
     if not path.exists():
         return {"id": cid, "ran": False, "outcome_ok": False, "problems": ["not run"], "controls": []}
     act = json.loads(path.read_text())
@@ -95,7 +97,7 @@ def main():
     ok = sum(r["outcome_ok"] for r in rows)
     ran = [r for r in rows if r["ran"] and r.get("decision") != "skipped"]
     cost = sum(r["cost"] or 0 for r in ran)
-    out = ["# Golden-case results", "",
+    out = [f"# Golden-case results ({RUN})", "",
            f"Outcome matches expected: **{ok}/{len(rows)}**. Agent runs: {len(ran)}, total cost ${cost:.2f} (Claude Code's own estimate).", "",
            "| case | decision | labels added | outcome | problems |", "|---|---|---|---|---|"]
     for r in rows:
@@ -109,7 +111,7 @@ def main():
     for r in rows:
         if r.get("comment"):
             out += [f"### {r['id']}", "", "```text", r["comment"].strip(), "```", ""]
-    (HERE / "results.md").write_text("\n".join(out) + "\n")
+    (HERE / f"results-{RUN}.md").write_text("\n".join(out) + "\n")
     print("\n".join(out[:len(rows) + 6]))
 
 

@@ -15,7 +15,8 @@ For each case this script:
   6. passes the recorded outputs through gh-aw's label validator and text sanitizer
      (apply_safe_outputs.cjs) to get what would have reached GitHub.
 
-Writes actual/<case>.json and logs/<case>.stream.jsonl. Never calls GitHub.
+Writes actual/<run>/<case>.json and logs/<run>/<case>.stream.jsonl (run name from $REPLAY_RUN,
+default run1). Never calls GitHub.
 
 Usage: python3 evals/golden/replay.py run [case-id ...]      (all cases when none are given)
        python3 evals/golden/replay.py prepare <case-id>     (steps 1-3 plus triage_checks.py; no model call)
@@ -42,9 +43,12 @@ AGENT_DIR = Path("/tmp/gh-aw/agent")                                          # 
 GH_AW_JS = Path(os.environ.get("GH_AW_JS", "/home/claude/ref/gh-aw/actions/setup/js"))
 GH_AW_MD = GH_AW_JS.parent / "md"
 MAINTAINER_ASSOC = {"OWNER", "MEMBER", "COLLABORATOR"}
+RUN = os.environ.get("REPLAY_RUN", "run1")              # actual/<RUN>/ and logs/<RUN>/, so repeated runs sit side by side
+ACTUAL, LOGS = HERE / "actual" / RUN, HERE / "logs" / RUN
 
 lock = yaml.safe_load(LOCK.read_text())
-agent_steps = {s.get("name"): s for s in lock["jobs"]["agent"]["steps"]}
+agent_steps = {s.get("name"): s for s in lock["jobs"]["activation"]["steps"]}   # the prompt is built in activation
+agent_steps.update({s.get("name"): s for s in lock["jobs"]["agent"]["steps"]})
 
 
 def step_env(name):
@@ -195,7 +199,7 @@ def run_case(cid, flags):
     actual = {"id": cid, "replayed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "model": flags["model"]}
     if issue["author_association"] in MAINTAINER_ASSOC:
         actual.update(skipped="pre-activation skip-roles: reporter is a repository member", applied=None)
-        (HERE / "actual" / f"{cid}.json").write_text(json.dumps(actual, indent=2) + "\n")
+        (ACTUAL / f"{cid}.json").write_text(json.dumps(actual, indent=2) + "\n")
         return actual
     ws = WORK / "workspace"
     build_workspace(ws)
@@ -214,7 +218,7 @@ def run_case(cid, flags):
            "--allowed-tools", flags["allowed"], "--disallowed-tools", flags["disallowed"],
            "--permission-mode", flags["permission_mode"], "--output-format", "stream-json", "--verbose",
            "--mcp-config", str(mcp)]
-    log_path = HERE / "logs" / f"{cid}.stream.jsonl"
+    log_path = LOGS / f"{cid}.stream.jsonl"
     with open(log_path, "w") as log:
         proc = subprocess.run(cmd, input=build_prompt(issue["number"]), cwd=ws, env=env, stdout=log,
                               stderr=subprocess.PIPE, text=True, timeout=20 * 60)
@@ -230,7 +234,7 @@ def run_case(cid, flags):
         p = AGENT_DIR / name
         if p.exists():
             actual[name.split(".")[0]] = json.loads(p.read_text())
-    (HERE / "actual" / f"{cid}.json").write_text(json.dumps(actual, indent=2) + "\n")
+    (ACTUAL / f"{cid}.json").write_text(json.dumps(actual, indent=2) + "\n")
     return actual
 
 
@@ -238,8 +242,8 @@ def main():
     if len(sys.argv) < 2 or sys.argv[1] not in ("run", "prepare"):
         raise SystemExit(__doc__)
     WORK.mkdir(parents=True, exist_ok=True)
-    (HERE / "actual").mkdir(exist_ok=True)
-    (HERE / "logs").mkdir(exist_ok=True)
+    ACTUAL.mkdir(parents=True, exist_ok=True)
+    LOGS.mkdir(parents=True, exist_ok=True)
     if sys.argv[1] == "prepare":
         case = json.loads((HERE / "cases" / sys.argv[2] / "input.json").read_text())
         ws = WORK / "workspace"
